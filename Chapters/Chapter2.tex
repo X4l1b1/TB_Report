@@ -98,7 +98,54 @@ Note that in this case, $F$ replaces the function $Count$ described in the previ
 \end{minipage}
 
 
-\paragraph{Walk-Left and String Matching Algorithms} In the scope of the FM-Index, it is at some point required to revert the BWT in order to determine the position of the queried string in the original text. To that end, the \textsl{LF-Mapping} algorithm introduced in the previous section shows is used in the definition of another algorithm, \textsl{Walk-Left}. This procedure, presented below, can be used to fully revert the transform, given $Occ$, the transform $T^{bwt}$ and the FM-Index $F$, as described in the algorithm below.
+\paragraph{String Matching and Walk-Left Algorithms} To now implement the string search in the FM-Index, two algorithms used. The first, initially used to fully revert the BWT, can be used to determine the position of a string in the original text from its position in the suffix array. This position can be determined using the second algorithm, which, given a string $q$ browse the suffix array using LF-Mapping, in order to determine a position range in which $q$ is located. Note that this interval might be empty, in which case $T$ does not contain $q$ or of length $\geq$ 1, in which case its length corresponds to the number of occurences of $q$ in $T$. \\
+Those algorithms and a graphical example of their execution are provided below. \\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{Figures/WL.png}
+    \caption{Illustration of the Walk-Left Algorithm on $acaacg$}
+    \label{fig:walkleft}
+\end{figure}
+
+\begin{minipage}[t]{0.45\textwidth}
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\KwIn{BWT $T^{bwt}$, FM-Index $F$, First occurrences $Occ$}
+	\KwOut{The original input string $T$}
+	i = 0\;
+	t = ""\;
+	\While{$T^{bwt}[i] \neq $ "\$"}{
+		t = $T^{BWT}[i] $ + t\;
+		i = $LF(i, T^{BWT}[i])$\;
+	}
+\caption{Walk-Left - Inverting the BWT}
+\end{algorithm}
+\end{minipage}
+\begin{minipage}[t]{0.45\textwidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{BWT $T^{bwt}$, FM-Index $F$, $Occ$, query string $q$}
+\KwOut{Range $top$, $bot$ for $q$ in suffix array}
+	$top$ = 0\
+	$bot$ = $len(T^{BWT})$\;
+	\For{$qc$ in $reverse(q)$}{
+		$top$ = $LF(top, qc)$\;
+		$bot$ = $LF(bot, qc)$\;
+}
+\caption{Exact String Matching in SA}
+\end{algorithm}
+\end{minipage}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{Figures/WL.png}
+    \caption{Illustration of the Walk-Left Algorithm on $acaacg$}
+    \label{fig:walkleft}
+\end{figure}
+
+\vspace*{5mm}
+Once a final $[top,bot]$ interval is obtained, and given it is not empty, it is then required to revert the BWT in order to determine the position of the queried string in the original text. To that end, the \textsl{LF-Mapping} algorithm introduced in the previous section shows is used in the definition of another algorithm, \textsl{Walk-Left}. This procedure, presented below, can be used to fully revert the transform, given $Occ$, the transform $T^{bwt}$ and the FM-Index $F$, as described in the algorithm below and a graphic illustration is given in Figure \ref{fig:walkleft}.
 
 \begin{minipage}[t]{0.55\textwidth}
 \begin{algorithm}[H]
@@ -119,36 +166,6 @@ Note that in this case, $F$ replaces the function $Count$ described in the previ
 This very simple algorithm starts from the $1^{st}$ character of $T^{bwt}$ and, until the $eos$ character \$ is reached, concatenates the current character $c$ to the result string and updates the index using LF-Mapping.
 
 \end{minipage}
-\vspace*{5mm}
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale = 0.4]{Figures/WL_algo.png}
-\caption{Illustration of the Walk-Left Algorithm inverting the $T^{bwt}$ to retrieve original text $T$}
-\label{fig:walkleft}
-\end{figure}
-
-Using the same function, we now define an algorithm that, given a BWT $T^{bwt}$ and a query string $q$, will return the index range in the implicit suffix array containing $q$ : \\
-
-\begin{minipage}[t]{0.55\textwidth}
-\begin{algorithm}[H]
-\SetAlgoLined
-\KwIn{BWT $T^{bwt}$, FM-Index $F$, First occurrences $Occ$, query string $q$}
-\KwOut{Index Range $top$, $bot$ for $q$ in the suffix array corresponding to $T^{bwt}$ }
-	$top$ = 0\;
-	$bot$ = $len(T^{BWT})$\;
-	\For{$qc$ in $reverse(q)$}{
-		$top$ = $LF(top, qc)$\;
-		$bot$ = $LF(bot, qc)$\;
-}
-\caption{Exact String Matching in Suffix Array}
-\end{algorithm}
-\end{minipage}
-\hspace{3mm}
-\begin{minipage}[t]{0.3\textwidth}
-Blablablabla blabla bla bla bla bla bla
-\end{minipage}
-
 \begin{figure}[H]
 \centering
 \includegraphics[scale = 0.35]{Figures/matching_algo.png}
