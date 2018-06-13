@@ -14,46 +14,76 @@
 %\end{figure*}
 %\vspace*{15mm}
 
-With the observations afore stated about the nature and form of the data in the context of genomics, it seems obvious that an appropriate data structure for those, along with an efficient algorithm, might to a serious gain in performance in the short reads alignments. The \textsl{FM-Index} is a lossless compression algorithm based on the \textsl{Burrows-Wheeler Transform} that offers such gains by reorganizing the data in a way that may reduce both memory needs and latency of the mapping process. \\
+With the observations afore stated about the nature and form of the data in the context of genomics, it seems obvious that an appropriate data structure for those, along with an efficient algorithm, might to a serious gain in performance in the short reads alignments. The \textsl{FM-Index} is a lossless compression algorithm based on the \textsl{Burrows-Wheeler Transform} that offers such gains by reorganizing the data in a way that may reduce both memory needs and latency of the mapping process. 
 
 Both those concepts are the subject of the next sections, followed by a \textsl{Python} implementation, which aims to better illustrate the whole read alignment process, and a \textsl{C++} implementation of the same algorithm which will be then used for the hardware implementation.
 
 \section{Theoretical Concepts}
 
-Introduced by \textsl{Michael Burrows} and \textsl{David Wheeler} in 1994, the \textsl{Burrows-Wheeler Transform} (BWT) rearranges the characters of a \textit{string} into sequences of similar characters. Although it does not reduce the size of the input data, the rearrangement gotten as output combined to the easy reversibility of the process and greatly improved compression potentiel, among other interesting properties, makes it particularly useful in genomic data processing and sequence mapping. 
+Introduced by \textsl{Michael Burrows} and \textsl{David Wheeler} in 1994, the \textsl{Burrows-Wheeler Transform} (BWT) rearranges the characters of a \textit{string} into sequences of similar characters by a series linear operations. Although it does not reduce the size of the input data, the rearrangement thus obtained gets greatly improved compression results. Furthermore, the easy reversibility of the process substantially facilitate data manipulation employed in sequence alignment, such as finding the original position from the determined one in the transform. This process is further detailed in the next section.
 
 \subsection{Burrows-Wheeler Transform Algorithm}
 
 The transform can be divided in 4 main steps\footcite{BWT0} :
 \begin{enumerate}
 \item Append a special character (usually represented as a \$), lexicographically smaller than any others, at the end of the input string \textrm{T}.
-\item Construct a conceptual square matrix $M_T$, whose row are cyclic shifts of \textrm{T\$}.
+\item Construct a square matrix $M_T$ with each being another iteration of a left rotating shift applied to the original string.
 \item Sort $M_T$ in lexicographical order
 \item Get the transformed text output $T^{bwt}$ by selecting the last column of $M_T$ 
 \end{enumerate}
 
-\begin{center}
 \begin{figure}[h]
-\hspace{10mm}	\includegraphics[scale=0.3]{Figures/BWT_MIT.png}
+\centering
+\includegraphics[scale=0.65]{Figures/bwt.png}
 \caption{Illustration of the \textsl{BWT} applied to the string \textit{acaacg}}
-\end{figure}
-\end{center}
-The figure above\footcite{MIT_BWT} illustrates the process of the \textsl{BWT}, it will be shown next what is used in the mapping process, but first let us note the following properties :
+ \label{fig:bwt}
+ \end{figure}
+The figure \ref{fig:bwt} above illustrates the process of the \textsl{BWT}, it will be shown next what is used in the mapping process, but first let us note the following properties :
 \begin{enumerate}
-\item the process is revertible
+\item the process is revertible as it consists exclusively of linear operations
 \item all columns are permutations of the input $T$
 \item the last columns contains mostly all similar character consecutively
 \item the first column contains all characters in lexicographical order, so the first row will always start with the inserted \$ symbol (i. e. be the first rotation applied to $T$)
+\item Occurrences of a character $c$ in the first column are sorted the same way than in the last column, meaning ranks order in the first and last column match, as depicted in figure \ref{fig:LF}
 \end{enumerate}
-Those properties will show up to be useful in the indexing process, which is the subject of the next paragraph.
+
+
+
+From a compression perspective, the $T^{bwt}$ result is a way better candidate than its original form as it sees most of similar characters regrouped, hence allowing shorter encoding for those sequences\footnote{http://www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.pdf}. Furthermore, properties 1, 2 and 5 indicate an easy transition, if needed, back to the original text  using the  \textsl{LF Mapping} illustrated in figure \ref{fig:LF} and formally defined in equation \ref{eq:LF}. \\
+
+For $Occ$ an array containing, for each symbol $c$ of the alphabet $\Sigma$, the index of its first occurence in the first column $F$ and $Count(i, c)$, a function returning the number of occurences of $c$ in $F$ at given index $i$, we can define the $Last-to-First$ mapping as follow :
+\begin{equation}
+    LF(i, c) = Occ[c] + Count(i, c)
+    \label{eq:LF}
+\end{equation}
+
+
+\begin{minipage}[t]{0.5\textwidth}
+    \begin{figure}[H]
+\hspace{-15mm}  \includegraphics[scale = 0.5]{Figures/LF.png}
+  \caption{LF-Mapping of $3^{rd}$ occurrence of $a$ from last column}
+    \label{fig:LF}
+\end{figure}
+\end{minipage}
+\begin{minipage}[t]{0.4\textwidth}
+        This figure illustrates how the mapping is done : from the fact that character ranking are the same in both last and first column (and all the others for that matter), the \textsl{LF-Mapping} algorithm enables retrieval of the position in $F$ for any character in $L$. This method is used in the \textsl{Walk-Left} algorithm to reconstruct the original text, which is thereafter further detailed in figure \ref{fig:walkleft}.
+\end{minipage}
+\vspace*{5mm}
+
+Finally, from a search point of view, the last property is the most interesting. Lexicographical order allows for spatial proximity of sought result, hence, an iterative search through a word to find in $T^{bwt}$ will see each iteration to indicate spatially close positions which yet facilitates this process.\\
+
+Now that this concept is well defined, the next section will aim to illustrate how the FM-Index algorithm makes the best out of this transform in order to enable efficient data compression and sub-string queries.
 
 \subsection{FM-Index}
 
-An \textsl{FM-Index} is a lossless text compression based on the \textsl{BWT}\footcite{FM_INDEX}, it was created by \textsl{Paolo Ferragina} and \textsl{Giovanni Manzini} whom refer to it as an \textit{"opportunistic data structure"}, it allows compression and fast sub-string queries on the compressed data, which highly improves sequence matching performances, as explained below.
+An \textsl{FM-Index} is a lossless text compression based on the \textsl{BWT}\footcite{FM_INDEX}, it was created by \textsl{Paolo Ferragina} and \textsl{Giovanni Manzini} whom refer to it as an \textit{"opportunistic data structure"}. The design of this index is based upon the combination of the BWT and the suffix array data structure, displayed in red in figure \ref{fig:bwt}.\footnote{https://pdfs.semanticscholar.org/d896/e62b6cbfd623d1d9041f90b7f9e41d1451a7.pdf}
 
 \paragraph{Creating an FM-Index}
 
-In order to create the \textsl{FM-Index} of an input full-text \textit{string} $T$, one must create its \textsl{BWT} transform $T^{bwt}$ as explained in the previous section. If you recall \texttt{Figure 1.1}, the left matrix illustrate in \textcolor{red}{red} a structure, called the \textit{suffix array}, derived from the input. This structure, implicitly defined by $T^{bwt}$, can be accessed using the \textsl{FM-Index} data structure. (SOURCE = USING THE MULTI STRING BURROW WHEELER paper) This index takes full advantage of the properties described in the previous section to construct a mapping algorithm between the $T^{bwt}$ and the suffix array of an input $T$, stating that the $j^{th}$ occurrence of a symbol $c$ in $T^{bwt}$ corresponds to the $j^{th}$ suffix beginning with that symbol in the suffix array, this is called the \textsl{Last-to-First Mapping} or LF-Mapping.(CITER SOURCE WIKI P EX OU PAPIER). \\
+In order to create the \textsl{FM-Index} of an input full-text \textit{string} $T$, one must create its \textsl{BWT} transform $T^{bwt}$ as explained in the previous section. Referring again to figure \ref{fig:bwt}, the \textcolor{red}{red} sub-matrix from the one in the middle, i.e. the suffix array (SA) will also show to be useful.
+
+
+If you recall \texttt{Figure 1.1}, the left matrix illustrate in \textcolor{red}{red} a structure, called the \textit{suffix array}, derived from the input. This structure, implicitly defined by $T^{bwt}$, can be accessed using the \textsl{FM-Index} data structure. (SOURCE = USING THE MULTI STRING BURROW WHEELER paper) This index takes full advantage of the properties described in the previous section to construct a mapping algorithm between the $T^{bwt}$ and the suffix array of an input $T$, stating that the $j^{th}$ occurrence of a symbol $c$ in $T^{bwt}$ corresponds to the $j^{th}$ suffix beginning with that symbol in the suffix array, this is called the \textsl{Last-to-First Mapping} or LF-Mapping.(CITER SOURCE WIKI P EX OU PAPIER). \\
 So, given a $T^{bwt}$ of $N$ symbols and an alphabet $\Sigma$ of $\sigma$ elements, we define the FM-Index $F$ as a two-dimensional matrix of value with $(N + 1)$ rows and $\sigma$ column. For a given index $i$ (row) and a given symbol $c$ (column), $F[i][c]$ contains the number of occurrences of $c$ before the index $i$ in $T^{BWT}$. From this definition, we can construct the whole index for $T^{bwt}$, initializing $F[0]$ at $0$ and $\forall$ $i$ from $0$ to $N$, copy $F[i]$ into $F[i+1]$, incrementing $F[i+1][c]$ only if $T^{BWT}[i]$ = $c$. The last entry $F[N + 1]$ represents the total number of occurrences of all symbols in $T^{bwt}$. Using this index, we can statically compute the $Occ$ array of length $\sigma$, which stores the index of the first suffix starting with each symbol in the suffix array.
 
 \paragraph{LF-Mapping, Walk-Left and String Matching Algorithms}
@@ -88,6 +118,7 @@ Blablablabla blabla bla bla bla bla bla
 \centering
 \includegraphics[scale = 0.4]{Figures/WL_algo.png}
 \caption{Illustration of the Walk-Left Algorithm inverting the $T^{bwt}$ to retrieve original text $T$}
+\label{fig:walkleft}
 \end{figure}
 
 Using the same function, we now define an algorithm that, given a BWT $T^{bwt}$ and a query string $q$, will return the index range in the implicit suffix array containing $q$ : \\

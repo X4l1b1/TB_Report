@@ -46,8 +46,14 @@ Hardware accelerators are now a common practice\footnote{CITE} when confronted t
 
 \section{Research Question}
 
-[Poser ici ma vraie thèse, à savoir que je vais vouloir vérifier si 1) c'est possible d'implémenter tout ça sur FPGA 2)si c'est bel et bien plus rapide]
+As mentioned in the previous section beyond the urgent need of quick performance improvement of short read alignment in genomic data processing, there might be a real speedup potential in the use of a hardware accelerator for this part of the analysis pipeline. 
+
+With this in mind, this project will try to propose an hardware implementation of the FM-Index. The main idea is to provide a time and memory efficient solution as an alternative to otherwise entirely software solutions. In a second phase, this project will try to explore the performances of such a model in order to determine a final solution offering a significant speedup.
 
 \section{Method Introduction}
 
-[Présenter grosso modo ce que je vais faire, présenter aussi le plan du document]
+This project will start with a custom software implementation of the FM-Index, in \textsl{C++}, in order to both get a better grasp of the concepts at stake, and provide a communication interface for the future hardware module.
+
+ For this second phase, among many hardware solutions, \textsl{FPGAs} seem like an ideal candidate. Enabling a fully dedicated hardware design and able to use  highly efficient data [management ??] tools (pour dire mémoire et bus).
+
+Using \textsl{Hybrid Memory Cube} to store the reference data and \textsl{PCI Express} bus to communicate with a computer, both of which will be further introduced in an upcoming section, this project will then try to design a simple and low latency FM-Index implementation in \textsl{VHDL}. Then, in a final phase, it will try to explore the parallelization possibilities of this solution in order to make the best out of both \textsl{FPGA} and \textsl{HMC} provided advantages.
