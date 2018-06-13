@@ -1,0 +1,53 @@
+% Chapter 1
+
+\chapter{Introduction} % Main chapter title
+
+\label{Chapter1} % For referencing the chapter elsewhere, use \ref{Chapter1} 
+
+%----------------------------------------------------------------------------------------
+
+
+%----------------------------------------------------------------------------------------
+\textit{DNA} sequencing is considered to be a major breakthrough in both medical and biological research. Despite being at first a very lengthy process, the development of new parallel \textit{high-throughput sequencing} (HTS) \footnote{CITE ILLUMINA} technologies allowed very fast and inexpensive sequencing \footnote{CITATION}. Unfortunately, the same breakthrough has not been made with the processing of those data. 
+As a matter of fact, the rate at which genomic data is generated exceeds substantially the rate at which it can be processed and this issue might become the next major \textsl{Big Data} issue, surpassing current massive data originator\footnote{http://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1002195} .\\
+
+Current DNA sequencing software, such as \textit{Bowtie}\footnote{citer}, use optimal data structures and highly parallelized algorithms in order to reach a maximum processing speed but the whole sequencing still requires several days of computation. Indeed, even though those softwares run on ultra-fast CPUs and pass through highly optimizing compilers, they suffer from various forms of processing overhead due to the heavier, nonspecific environment that are an operating systems and CPUs.
+
+With this in mind, this section will start by providing a further description of genomic data, to then extract from it the main problematic and the research question of this project. Thereafter XXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+\section{Genomics \& Genomic Data}
+
+\textit{Genomics} is an area within \textit{Genetics} that focuses on sequencing and analyzing organism's genome (\cite{genomic}). The whole \textit{genome} is contained in every living cell, is encoded in \textit{DNA} and for us, distributed over 22 chromosomes, each of which in two copies, and two sex chromosomes. Every DNA sequence consists of combinations of four different nucleobases A, C, G and T (respectively \textit{adenine, cytosine, guanine} and \textit{thymine}) in a double-helix form. This shape consists of two complementary strands i.e. both strands contain the same information and one is the \textit{reverse} complement of the other (A always pairs with T, and G with C). The sequence length varies a lot between organisms, from around a million of pairs for bacteria, to hundred of billions for some fish and plants. Typical length for humans is around 3 billions of pairs. \\
+
+The size of those genomes therefore requires a large amount of processing to acquire, of space to store and most importantly, a huge amount of both to extract useful information from it. The goal of genomic data analysis is to determine the functions of specific genes, their origins and their evolution among many other informations. An efficient way to do so is to determine for each species a reference genome which can then be used to as a map. This method allows researcher to identify measured samples as belonging to those references and eventually enables the identification of specific sequences to precise species and biological functions. \\
+
+
+
+\section{Problematic Introduction}
+
+Genomic data is thus foreseen to become a major \textit{Big Data} issue, it's amount increasing at a faster rate than current data processing technologies and despite multiple highly optimized tools designed to increase processing throughput. The current pipeline, cannot seem to catch up. A coarse example of the genomic analysis pipeline is presented below. \\
+
+\begin{minipage}[t]{0.60\textwidth}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.2]{Figures/xkcd.png}
+    \caption{Illus}
+    \label{fig:analysispipe}
+\end{figure}
+\end{minipage}
+\begin{minipage}[t]{0.350\textwidth}
+Parler un peu de chaque stage et préciser que le bottleneck est quand même en grande partie sur le matching \\
+\end{minipage}
+\vspace*{5mm}
+As an obligatory procedure to any further work on genomic data, increasing the performance on read alignment seems greatly needed. As mentioned earlier, processing those pieces of information means processing a huge volume of rather redundant textual data. This distinctive aspect makes room already for a lot of optimization including data compression and parallel processing and this is where another approach might be pertinent. \\
+
+Hardware accelerators are now a common practice\footnote{CITE} when confronted to a need of performance gain for a specific task in an information system. This approach seems indeed to be very efficient by providing a fully dedicated highly parallelizable system, meaning very little to no processing overhead, for those tasks. In this context, the sequence mapping of a plethora of short reads to one common reference seems like an ideal candidate for such an approach. This idea is the main scope of this project and will be further detailed in the next section.
+
+\section{Research Question}
+
+[Poser ici ma vraie thèse, à savoir que je vais vouloir vérifier si 1) c'est possible d'implémenter tout ça sur FPGA 2)si c'est bel et bien plus rapide]
+
+\section{Method Introduction}
+
+[Présenter grosso modo ce que je vais faire, présenter aussi le plan du document]

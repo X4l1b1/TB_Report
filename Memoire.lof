@@ -1,0 +1,15 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\select@language {english}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Illustration of the \textsl {BWT} applied to the string \textit {acaacg}\relax }}{6}{figure.caption.22}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Illustration of the Walk-Left Algorithm inverting the $T^{bwt}$ to retrieve original text $T$\relax }}{8}{figure.caption.40}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Illustration of the matching process of the string $q$ = $"aac"$ in the suffix array derived from $T^{bwt}$ \relax }}{8}{figure.caption.49}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Illustration of the two proposed improvement\relax }}{10}{figure.caption.56}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }

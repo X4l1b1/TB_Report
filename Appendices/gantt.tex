@@ -1,0 +1,99 @@
+\chapter{}
+\label{gantt}
+\small
+\begin{sidewaystable}[h]
+        \begin{ganttchart}[
+        hgrid,
+        vgrid,
+        title label font=\footnotesize\color{red},
+        %x unit=3.3mm, 2017-04-30
+        x unit=1.65mm,
+        y unit title=10mm,
+        y unit chart=7mm,
+        time slot format=isodate
+        ]{2017-03-06}{2017-07-14}
+        %\gantttitleclendar{year, month, day, week=3, weekday} \\
+        \gantttitlecalendar{month=name, week=1} \\
+        \ganttgroup{Analysis}{2017-03-06}{2017-04-02} \\
+        \ganttbar{BWS Literature}{2017-03-06}{2017-03-13}\\
+        \ganttbar{State of the art}{2017-03-13}{2017-03-27}\\
+        \ganttbar{FMEA}{2017-03-20}{2017-04-02}\\
+
+        \ganttgroup{Algorithms dev.}{2017-04-03}{2017-05-09} \\
+        \ganttbar{Gathering data}{2017-04-03}{2017-04-09}\\
+        \ganttlinkedbar{Scripting}{2017-04-10}{2017-05-09}\\
+
+        \ganttgroup{VHDL}{2017-05-09}{2017-07-02} \\
+        \ganttbar{Strategy}{2017-05-09}{2017-05-15}\\
+        \ganttlinkedbar{Coding}{2017-05-16}{2017-06-18}\\
+
+        \ganttgroup{Verification}{2017-05-23}{2017-07-02} \\
+        \ganttbar{Strategy}{2017-05-16}{2017-05-22}\\
+        \ganttlinkedbar{Coding}{2017-05-23}{2017-07-02}\\
+
+        \ganttgroup{Thesis wrt}{2017-03-06}{2017-07-14} \\
+        \ganttbar{Analysis}{2017-03-06}{2017-04-02} \\
+        \ganttbar{Algo.}{2017-04-03}{2017-05-09} \\
+        \ganttbar{VHDL and verif.}{2017-05-09}{2017-07-02} \\
+        \ganttbar{Finalisation}{2017-07-02}{2017-07-14}
+
+        \end{ganttchart}
+%\end{landscape}
+%\end{tikzpicture}
+%}
+\end{sidewaystable}
+
+\small
+\begin{sidewaystable}[h]
+        \begin{ganttchart}[
+                hgrid,
+                vgrid,
+                title label font=\footnotesize\color{red},
+                %x unit=3.3mm, 2017-04-30
+                x unit=1.65mm,
+                y unit title=10mm,
+                y unit chart=7mm,
+                time slot format=isodate,
+                %today=2017-07-14,
+                %progress=today,
+                ]{2017-03-06}{2017-07-18}
+                %\gantttitleclendar{year, month, day, week=3, weekday} \\
+                \gantttitlecalendar{month=name, week=1} \\
+                \ganttgroup{Analysis}{2017-03-06}{2017-04-02} \\
+                \ganttbar{BWS Literature}{2017-03-06}{2017-03-13}\\
+                \ganttbar{State of the art}{2017-03-13}{2017-03-20}\\
+                \ganttbar{FMEA}{2017-03-15}{2017-03-27}\\
+                \ganttbar{Encoder optimisation}{2017-03-27}{2017-03-31} \\
+
+                %-----------------ALGO
+                \ganttgroup{Algorithms dev.}{2017-04-03}{2017-05-09} \\
+                \ganttbar{Gathering data}{2017-03-08}{2017-03-10}
+                \ganttbar{}{2017-04-03}{2017-04-09}\\
+                \ganttlinkedbar{Scripting}{2017-04-10}{2017-04-18}
+                \ganttbar{}{2017-04-24}{2017-05-01}
+                \ganttbar{}{2017-05-09}{2017-05-16}
+                \ganttbar{}{2017-06-06}{2017-06-08}
+                \ganttbar{}{2017-06-26}{2017-06-30}
+                \ganttbar{}{2017-07-10}{2017-07-11}\\
+
+                %-----------------VHDL
+                \ganttgroup{VHDL}{2017-05-09}{2017-07-02} \\
+                \ganttbar{Strategy}{2017-04-19}{2017-04-23}
+            \ganttbar{}{2017-05-09}{2017-05-15}\\
+                \ganttbar{Coding}{2017-05-01}{2017-05-08}
+                \ganttbar{}{2017-05-16}{2017-06-18}
+                \ganttbar{}{2017-05-31}{2017-07-13}\\
+
+                %-----------------VERIFICATION
+                \ganttgroup{Verification}{2017-05-23}{2017-07-02} \\
+                \ganttbar{Strategy}{2017-05-16}{2017-05-22}\\
+                \ganttlinkedbar{Coding}{2017-05-23}{2017-07-12}\\
+
+                \ganttgroup{Thesis wrt}{2017-03-06}{2017-07-14} \\
+                \ganttbar{Analysis}{2017-03-06}{2017-04-02} \\
+                \ganttbar{Algo.}{2017-04-03}{2017-05-09} \\
+                \ganttbar{VHDL and verif.}{2017-05-09}{2017-07-02} \\
+                \ganttbar{Finalisation}{2017-07-02}{2017-07-14}
+
+        \end{ganttchart}
+\end{sidewaystable}
