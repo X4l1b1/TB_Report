@@ -22,7 +22,7 @@ Both those concepts are the subject of the next sections, followed by a \textsl{
 
 Introduced by \textsl{Michael Burrows} and \textsl{David Wheeler} in 1994, the \textsl{Burrows-Wheeler Transform} (BWT) rearranges the characters of a \textit{string} into sequences of similar characters by a series linear operations. Although it does not reduce the size of the input data, the rearrangement thus obtained gets greatly improved compression results. Furthermore, the easy reversibility of the process substantially facilitate data manipulation employed in sequence alignment, such as finding the original position from the determined one in the transform. This process is further detailed in the next section.
 
-\subsection{Burrows-Wheeler Transform Algorithm}
+\subsection{Burrows-Wheeler Transform Algorithm \& LF-Mapping}
 
 The transform can be divided in 4 main steps\footcite{BWT0} :
 \begin{enumerate}
@@ -50,7 +50,7 @@ The figure \ref{fig:bwt} above illustrates the process of the \textsl{BWT}, it w
 
 
 From a compression perspective, the $T^{bwt}$ result is a way better candidate than its original form as it sees most of similar characters regrouped, hence allowing shorter encoding for those sequences\footnote{http://www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.pdf}. Furthermore, properties 1, 2 and 5 indicate an easy transition, if needed, back to the original text  using the  \textsl{LF Mapping} illustrated in figure \ref{fig:LF} and formally defined in equation \ref{eq:LF}. \\
-
+\newpage
 For $Occ$ an array containing, for each symbol $c$ of the alphabet $\Sigma$, the index of its first occurence in the first column $F$ and $Count(i, c)$, a function returning the number of occurences of $c$ in $F$ at given index $i$, we can define the $Last-to-First$ mapping as follow :
 \begin{equation}
     LF(i, c) = Occ[c] + Count(i, c)
@@ -80,23 +80,31 @@ An \textsl{FM-Index} is a lossless text compression based on the \textsl{BWT}\fo
 
 \paragraph{Creating an FM-Index}
 
-In order to create the \textsl{FM-Index} of an input full-text \textit{string} $T$, one must create its \textsl{BWT} transform $T^{bwt}$ as explained in the previous section. Referring again to figure \ref{fig:bwt}, the \textcolor{red}{red} sub-matrix from the one in the middle, i.e. the suffix array (SA) will also be used. Finally, the index itself, noted $F$ will be constructed from the SA and $T^{bwt}$.
+In order to create the \textsl{FM-Index} of an input full-text \textit{string} $T$, one must create its \textsl{BWT} transform $T^{bwt}$ as explained in the previous section. Referring again to figure \ref{fig:bwt}, the \textcolor{red}{red} sub-matrix from the one in the middle, i.e. the suffix array (SA) will also be used. Finally, the index itself, noted $F$ will be constructed from the SA and $T^{bwt}$. \\
 
-So, for a given $T^{bwt}$ of $N$ symbols and an alphabet $\Sigma$ of $\sigma$ elements, we define the FM-Index $F$ as a two-dimensional matrix with $(N + 1)$ rows and $\sigma$ column. For a given index $i$ (row) and a given symbol $c$ (column), $F[i][c]$ contains the number of occurrences of $c$ before the index $i$ in $T^{BWT}$. From this definition, we can construct the whole index for $T^{bwt}$, initializing $F[0]$ at $0$ and $\forall$ $i$ from $0$ to $N$, copy $F[i]$ into $F[i+1]$, incrementing $F[i+1][c]$ only if $T^{BWT}[i]$ = $c$. The last entry $F[N + 1]$ represents the total number of occurrences of all symbols in $T^{bwt}$. Using this index, we can statically compute the $Occ$ array of length $\sigma$, which stores the index of the first suffix starting with each symbol in the suffix array.
+For a given $T^{bwt}$ of $N$ symbols on an alphabet $\Sigma$ of $\sigma$ elements, we define the FM-Index $F$ as a two-dimensional matrix with $(N + 1)$ rows and $\sigma$ column. Hence, the entry at index $i$ (row) and for symbol $c$ (column), $F[i][c]$ contains the number of occurrences of $c$ before the index $i$ in $T^{BWT}$. From this definition, we can construct the whole index for $T^{bwt}$, initializing $F[0]$ at $0$ and $\forall$ $i$ from $0$ to $N$, copy $F[i]$ into $F[i+1]$, incrementing $F[i+1][c]$ only if $T^{BWT}[i]$ = $c$. The last entry $F[N + 1]$ represents the total number of occurrences of all symbols in $T^{bwt}$. This whole structure of the FM-Index is given an example in the figure \ref{fig:fmindex} below. \\
 
-\paragraph{LF-Mapping, Walk-Left and String Matching Algorithms}
-We now have all the elements required to describe the LF-Mapping function for $i$ the current index and $c \in \Sigma$ the queried symbol in $T^{bwt}$  : 
-\begin{equation*}
-LF(i, c) = Occ[c] + F[i][c]
-\end{equation*}
-The return value is the index of the corresponding character in the suffix array. \\
-Using this function, we can define the \textsl{Walk-Left} algorithm to invert the BWT and retrieve to original string $T$. \\
+\begin{minipage}{0.5\textwidth}
+\begin{figure}[H]
+    \hspace{-15mm}\includegraphics[scale = 0.35]{Figures/FMIndex.png}
+    \caption{Illustration of the FM-Index construction from "$acaacg$}
+    \label{fig:fmindex}
+\end{figure}
+\end{minipage}
+\hspace{15mm}
+\begin{minipage}{0.3\textwidth}
+After applying the BWT to the input text, the suffix array is extracted and from it, the $Occ$ array. From the transform itself, the FM-Index $F$ is filled. \\
+Note that in this case, $F$ replaces the function $Count$ described in the previous section by statically storing all those values a priori.
+\end{minipage}
+
+
+\paragraph{Walk-Left and String Matching Algorithms} In the scope of the FM-Index, it is at some point required to revert the BWT in order to determine the position of the queried string in the original text. To that end, the \textsl{LF-Mapping} algorithm introduced in the previous section shows is used in the definition of another algorithm, \textsl{Walk-Left}. This procedure, presented below, can be used to fully revert the transform, given $Occ$, the transform $T^{bwt}$ and the FM-Index $F$, as described in the algorithm below.
 
 \begin{minipage}[t]{0.55\textwidth}
 \begin{algorithm}[H]
 	\SetAlgoLined
-	\KwIn{BWT $T^{bwt}$, FM-Index $F$, First occurrences $Occ$, index $i$}
-	\KwOut{The original input strinp $T$}
+	\KwIn{BWT $T^{bwt}$, FM-Index $F$, First occurrences $Occ$}
+	\KwOut{The original input string $T$}
 	i = 0\;
 	t = ""\;
 	\While{$T^{bwt}[i] \neq $ "\$"}{
@@ -108,7 +116,8 @@ Using this function, we can define the \textsl{Walk-Left} algorithm to invert th
 \end{minipage}
 \hspace{3mm}
 \begin{minipage}[t]{0.3\textwidth}
-Blablablabla blabla bla bla bla bla bla
+This very simple algorithm starts from the $1^{st}$ character of $T^{bwt}$ and, until the $eos$ character \$ is reached, concatenates the current character $c$ to the result string and updates the index using LF-Mapping.
+
 \end{minipage}
 \vspace*{5mm}
 
