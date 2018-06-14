@@ -302,7 +302,7 @@ The file containing the reference genome is expected to be in \textsl{FASTA} for
 \begin{figure}[H]
     \centering
     \includegraphics[scale = 0.5]{Figures/fastaex.png}
-    \caption{Illustration of a FASTA file }
+    \caption{Illustration of an example FASTA file }
     \label{fig:fasta}
 \end{figure}
 
@@ -312,8 +312,8 @@ On the other hand, the files containing the shorts reads to map to the reference
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.5]{Figures/fastaex.png}
-    \caption{Illustration of a FASTA file }
+    \includegraphics[scale = 0.35]{Figures/fastqex.png}
+    \caption{Illustration of an example FASTQ file }
     \label{fig:fastq}
 \end{figure}
 
@@ -337,6 +337,8 @@ This file contains samples of the suffix array, as mentioned in section 2.1.2.
 [...]
 
 \paragraph{Mapped Sequences}
+
+Mapped sequences are returned in \textsl{SAM}  (Sequence Alignment/Map) format which provides a simple yet exhaustive description of each aligned read with respect to a reference
 
 \vspace*{4mm}
 Below is a schema describing the program structure and execution flow along with the files it produces from the FM-Index structures :
