@@ -297,9 +297,25 @@ uint64_t * suffix_idx;
 \subsection{Input Files}
 
 \paragraph{Reference Genome}
-The file containing the reference genome is expected to be in \textsl{FASTA} format \footnote{https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=BlastHelp}. The main advantage of this choice is the format's simplicity. The first line contains the description of the following data while the rest of the file contains only nucleic amino acis (namely A, C, G, T, N and U).
+The file containing the reference genome is expected to be in \textsl{FASTA} format \footnote{https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=BlastHelp}. The main advantage of this choice is the format's simplicity. The first line contains the description of the following data while the rest of the file contains only nucleic amino acis (namely A, C, G, T, N and U). A short example of this format is given in Figure \ref{fig:fasta}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{Figures/fastaex.png}
+    \caption{Illustration of a FASTA file }
+    \label{fig:fasta}
+\end{figure}
 
 \paragraph{Short Reads}
+On the other hand, the files containing the shorts reads to map to the reference genome are expected to be in \textsl{FASTQ} format \footnote{http://support.illumina.com/content/dam/illumina-support/help/BaseSpaceHelp_v2/Content/Vault/Informatics/Sequencing_Analysis/BS/swSEQ_mBS_FASTQFiles.htm}. The main difference between this format and the one presented below is that \textsl{FASTQ} allows the inclusion of the estimated quality score of the read for each symbol. For each read, one line corresponding to its ID, then the read symbols followed by a line containing only the symbol "+". Below this line are the quality scores, each position corresponding to their nucleoread counterpart. Hence, the global structure of a file following this format would be as represented in Figure \ref{fig:fastq}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{Figures/fastaex.png}
+    \caption{Illustration of a FASTA file }
+    \label{fig:fastq}
+\end{figure}
 
 \subsection{Output Files}
 
