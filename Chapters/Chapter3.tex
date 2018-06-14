@@ -24,7 +24,7 @@ This project is implemented in VHDL and included in a pre-existing project, the 
 
 \section{Model Conception}
 
-A first, non parallel, model conception is presented in the Figures \ref{fig:seqschema} and \\
+A first, non parallel, model conception is presented in the Figures \ref{fig:seqschema} and \ref{fig:fsm}.\\
 \begin{figure}[H]
     \centering
     \includegraphics[scale = 0.5]{Figures/schema_bloc.png}
@@ -35,8 +35,17 @@ A first, non parallel, model conception is presented in the Figures \ref{fig:seq
 \begin{description}
 \item [PCI Interface] - This bloc is the interface between the \textsl{PCI Express Bus} and the FM-Index bloc. It receives short reads and command from a linked computed. In this interface, the FM-Index bloc is a slave, that wait for commands and data to start working. A FIFO is already implemented and this bloc consumes what is put into it. When a result is ready, it is placed in another FIFO that can be accessed by the computer master on the other end.
 \item [HMC Interface] - Similarly to the previous bloc, this one is the interface between the board main memory and the FM-Index bloc. Only accessed through the \textsl{Memory Query} bloc, it is used to query data, may it be checkpoints entries, BWT entries of Sampled Suffix array elements. All transactions are 128bits wide and the interpretation of the received data in the \textsl{Memory Query} bloc.
-\item [Memory Query] - This bloc is used by the FM-Index to issue all the different queries it might need along the string matching process. Those queries can be about "checkpoints", BWT symbol or sampled suffix array entries and the type  
+\item [Memory Query] - This bloc is used by the FM-Index to issue all the different queries it might need along the string matching process, which means it implements all 3 "functions" needed by the FM-Index : $Occ$, $Count$ (thus $LF$) and $Walk-Left$ (with the sampled suffix array). Those queries can be about "checkpoints", BWT symbol or sampled suffix array entries and the type of said requests is specified by the \textrm{req\_type} signal. This bloc is then responsible for interpreting the received data and transmitting it in the appropriate form to the FM-Index bloc.
 \end{description}
+
+\subsection{FM-Index - UC}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.25]{Figures/MSS.png}
+    \caption{Global view of the FM-Index FSM}
+    \label{fig:fsm}
+\end{figure}
 
 
 \section{VHDL Implementation}
