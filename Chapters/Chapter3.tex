@@ -40,9 +40,15 @@ A first, non parallel, model conception is presented in the Figures \ref{fig:seq
 
 \subsection{FM-Index - UC}
 
+This section illustrates the internal functioning of the \textsl{FM-Index} bloc, which is a hierarchical FSM, dividid in 4 main steps as described below and illustrated in Figures \ref{fig:fsm}.
+\begin{description}
+\item [Read Sequence -] This loop is used to consume data from the \textsl{PCI Express Interface} in order to load a short read to align in the reference text along with an ID value associated to it.
+\item [Bounds] - This loop scans the input sequence $q$ and, at each iteration, queries the \textsl{HMC} memory to update $top$ and $bot$. Note that is corresponds the to Algorithm \ref{alg:match}.
+\item [Walk Left] - This loop corresponds to Algorithm \ref{alg:WL}. It is only reached when the precedent loop ends up with a valid range for $q$ in the suffix array, i.e. $q$ exists in the reference text. Then again, at each iteration, the HMC is queried to update the index.
+\item [Send Result] - This last part of the FSM sends back the results, whether $q$ was found or not, back to the result FIFO in the \textsl{PCI Express Interface}. This result contains the position (special value if not found), along with the ID corresponding to the query, stored in the \textsl{Read Sequence} step.
+\end{description}
 \begin{figure}[H]
-    \centering
-    \includegraphics[scale = 0.25]{Figures/MSS.png}
+ \includegraphics[scale = 0.36]{Figures/MSS.png}
     \caption{Global view of the FM-Index FSM}
     \label{fig:fsm}
 \end{figure}
@@ -50,10 +56,11 @@ A first, non parallel, model conception is presented in the Figures \ref{fig:seq
 
 \section{VHDL Implementation}
 
+[SOOON]
 
 \section{Test \& Validation}
 
-
+[LESS SOOON]
 
 
 
