@@ -22,7 +22,7 @@ Both those concepts are the subject of the next sections, followed by a \textsl{
 
 Introduced by \textsl{Michael Burrows} and \textsl{David Wheeler} in 1994, the \textsl{Burrows-Wheeler Transform} (BWT) rearranges the characters of a \textit{string} into sequences of similar characters by a series linear operations. Although it does not reduce the size of the input data, the rearrangement thus obtained gets greatly improved compression results. Furthermore, the easy reversibility of the process substantially facilitate data manipulation employed in sequence alignment, such as finding the original position from the determined one in the transform. This process is further detailed in the next section.
 
-\subsection{Burrows-Wheeler Transform Algorithm}
+\subsection{Burrows-Wheeler Transform Algorithm \& LF-Mapping}
 
 The transform can be divided in 4 main steps\footcite{BWT0} :
 \begin{enumerate}
@@ -35,7 +35,7 @@ The transform can be divided in 4 main steps\footcite{BWT0} :
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.65]{Figures/bwt.png}
-\caption{Illustration of the \textsl{BWT} applied to the string \textit{acaacg}}
+\caption{Illustration of the \textsl{BWT} applied to the string \textit{acaacg}\footnote{REPRIS DE}}
  \label{fig:bwt}
  \end{figure}
 The figure \ref{fig:bwt} above illustrates the process of the \textsl{BWT}, it will be shown next what is used in the mapping process, but first let us note the following properties :
@@ -50,7 +50,7 @@ The figure \ref{fig:bwt} above illustrates the process of the \textsl{BWT}, it w
 
 
 From a compression perspective, the $T^{bwt}$ result is a way better candidate than its original form as it sees most of similar characters regrouped, hence allowing shorter encoding for those sequences\footnote{http://www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.pdf}. Furthermore, properties 1, 2 and 5 indicate an easy transition, if needed, back to the original text  using the  \textsl{LF Mapping} illustrated in figure \ref{fig:LF} and formally defined in equation \ref{eq:LF}. \\
-
+\newpage
 For $Occ$ an array containing, for each symbol $c$ of the alphabet $\Sigma$, the index of its first occurence in the first column $F$ and $Count(i, c)$, a function returning the number of occurences of $c$ in $F$ at given index $i$, we can define the $Last-to-First$ mapping as follow :
 \begin{equation}
     LF(i, c) = Occ[c] + Count(i, c)
@@ -80,23 +80,39 @@ An \textsl{FM-Index} is a lossless text compression based on the \textsl{BWT}\fo
 
 \paragraph{Creating an FM-Index}
 
-In order to create the \textsl{FM-Index} of an input full-text \textit{string} $T$, one must create its \textsl{BWT} transform $T^{bwt}$ as explained in the previous section. Referring again to figure \ref{fig:bwt}, the \textcolor{red}{red} sub-matrix from the one in the middle, i.e. the suffix array (SA) will also be used. Finally, the index itself, noted $F$ will be constructed from the SA and $T^{bwt}$.
+In order to create the \textsl{FM-Index} of an input full-text \textit{string} $T$, one must create its \textsl{BWT} transform $T^{bwt}$ as explained in the previous section. Referring again to figure \ref{fig:bwt}, the \textcolor{red}{red} sub-matrix from the one in the middle, i.e. the suffix array (SA) will also be used. Finally, the index itself, noted $F$ will be constructed from the SA and $T^{bwt}$. \\
 
-So, for a given $T^{bwt}$ of $N$ symbols and an alphabet $\Sigma$ of $\sigma$ elements, we define the FM-Index $F$ as a two-dimensional matrix with $(N + 1)$ rows and $\sigma$ column. For a given index $i$ (row) and a given symbol $c$ (column), $F[i][c]$ contains the number of occurrences of $c$ before the index $i$ in $T^{BWT}$. From this definition, we can construct the whole index for $T^{bwt}$, initializing $F[0]$ at $0$ and $\forall$ $i$ from $0$ to $N$, copy $F[i]$ into $F[i+1]$, incrementing $F[i+1][c]$ only if $T^{BWT}[i]$ = $c$. The last entry $F[N + 1]$ represents the total number of occurrences of all symbols in $T^{bwt}$. Using this index, we can statically compute the $Occ$ array of length $\sigma$, which stores the index of the first suffix starting with each symbol in the suffix array.
+For a given $T^{bwt}$ of $N$ symbols on an alphabet $\Sigma$ of $\sigma$ elements, we define the FM-Index $F$ as a two-dimensional matrix with $(N + 1)$ rows and $\sigma$ column. Hence, the entry at index $i$ (row) and for symbol $c$ (column), $F[i][c]$ contains the number of occurrences of $c$ before the index $i$ in $T^{BWT}$. From this definition, we can construct the whole index for $T^{bwt}$, initializing $F[0]$ at $0$ and $\forall$ $i$ from $0$ to $N$, copy $F[i]$ into $F[i+1]$, incrementing $F[i+1][c]$ only if $T^{BWT}[i]$ = $c$. The last entry $F[N + 1]$ represents the total number of occurrences of all symbols in $T^{bwt}$. This whole structure of the FM-Index is given an example in the figure \ref{fig:fmindex} below. \\
 
-\paragraph{LF-Mapping, Walk-Left and String Matching Algorithms}
-We now have all the elements required to describe the LF-Mapping function for $i$ the current index and $c \in \Sigma$ the queried symbol in $T^{bwt}$  : 
-\begin{equation*}
-LF(i, c) = Occ[c] + F[i][c]
-\end{equation*}
-The return value is the index of the corresponding character in the suffix array. \\
-Using this function, we can define the \textsl{Walk-Left} algorithm to invert the BWT and retrieve to original string $T$. \\
+\begin{minipage}{0.5\textwidth}
+\begin{figure}[H]
+    \hspace{-15mm}\includegraphics[scale = 0.35]{Figures/FMIndex.png}
+    \caption{Illustration of the FM-Index construction from "$acaacg$}
+    \label{fig:fmindex}
+\end{figure}
+\end{minipage}
+\hspace{15mm}
+\begin{minipage}{0.3\textwidth}
+After applying the BWT to the input text, the suffix array is extracted and from it, the $Occ$ array. From the transform itself, the FM-Index $F$ is filled. \\
+Note that in this case, $F$ replaces the function $Count$ described in the previous section in this schema as it is directly read by it.
+\end{minipage}
 
-\begin{minipage}[t]{0.55\textwidth}
+
+\paragraph{String Matching and Walk-Left Algorithms} To now implement the string search in the FM-Index, two algorithms used. The first, initially used to fully revert the BWT, can be used to determine the position of a string in the original text from its position in the suffix array. This position can be determined using the second algorithm, which, given a string $q$ browse the suffix array using LF-Mapping, in order to determine a position range in which $q$ is located. Note that this interval might be empty, in which case $T$ does not contain $q$ or of length $\geq$ 1, in which case its length corresponds to the number of occurences of $q$ in $T$. \\
+Those algorithms are described in \ref{alg:WL} and \ref{alg:match} and a graphical example of execution are provided by Figures \ref{fig:walkleft} and \ref{fig:match}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{Figures/WL.png}
+    \caption{Illustration of the BWT inversion using Walk-Left\footnote{REPRIS DE}}
+    \label{fig:walkleft}
+\end{figure}
+
+\begin{minipage}[t]{0.45\textwidth}
 \begin{algorithm}[H]
 	\SetAlgoLined
-	\KwIn{BWT $T^{bwt}$, FM-Index $F$, First occurrences $Occ$, index $i$}
-	\KwOut{The original input strinp $T$}
+	\KwIn{BWT $T^{bwt}$, FM-Index $F$, First occurrences $Occ$}
+	\KwOut{The original input string $T$}
 	i = 0\;
 	t = ""\;
 	\While{$T^{bwt}[i] \neq $ "\$"}{
@@ -104,50 +120,26 @@ Using this function, we can define the \textsl{Walk-Left} algorithm to invert th
 		i = $LF(i, T^{BWT}[i])$\;
 	}
 \caption{Walk-Left - Inverting the BWT}
+\label{alg:WL}
 \end{algorithm}
 \end{minipage}
-\hspace{3mm}
-\begin{minipage}[t]{0.3\textwidth}
-Blablablabla blabla bla bla bla bla bla
-\end{minipage}
-\vspace*{5mm}
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale = 0.4]{Figures/WL_algo.png}
-\caption{Illustration of the Walk-Left Algorithm inverting the $T^{bwt}$ to retrieve original text $T$}
-\label{fig:walkleft}
-\end{figure}
-
-Using the same function, we now define an algorithm that, given a BWT $T^{bwt}$ and a query string $q$, will return the index range in the implicit suffix array containing $q$ : \\
-
-\begin{minipage}[t]{0.55\textwidth}
+\begin{minipage}[t]{0.45\textwidth}
 \begin{algorithm}[H]
 \SetAlgoLined
-\KwIn{BWT $T^{bwt}$, FM-Index $F$, First occurrences $Occ$, query string $q$}
-\KwOut{Index Range $top$, $bot$ for $q$ in the suffix array corresponding to $T^{bwt}$ }
-	$top$ = 0\;
+\KwIn{BWT $T^{bwt}$, FM-Index $F$, $Occ$, query string $q$}
+\KwOut{Range $top$, $bot$ for $q$ in suffix array}
+	$top$ = 0\
 	$bot$ = $len(T^{BWT})$\;
 	\For{$qc$ in $reverse(q)$}{
 		$top$ = $LF(top, qc)$\;
 		$bot$ = $LF(bot, qc)$\;
 }
-\caption{Exact String Matching in Suffix Array}
+\caption{Exact String Matching in SA}
+\label{alg:match}
 \end{algorithm}
 \end{minipage}
-\hspace{3mm}
-\begin{minipage}[t]{0.3\textwidth}
-Blablablabla blabla bla bla bla bla bla
-\end{minipage}
 
-\begin{figure}[H]
-\centering
-\includegraphics[scale = 0.35]{Figures/matching_algo.png}
-\caption{Illustration of the matching process of the string  $q$ = $"aac"$ in the suffix array derived from $T^{bwt}$ }
-\end{figure}
-
-
-If the return range $[top, bot]$ is empty, then the queried string $q$ does not appear in the reference text.
+\vspace*{5mm}
 
 
 \paragraph{Putting it all Together}
@@ -156,43 +148,48 @@ Now that all the data structures and computational tools have been introduced, w
 \begin{enumerate}
 \item Compute the Burrows-Wheeler Transform $T^{bwt}$ of $T$, use it to find $Occ$ and to get the FM-Index $F$.
 \item Use Algorithm 2 to determine the index of the rotation in the implicit suffix array containing $q$
-\item If such an index exists (i.e. $q$ occurs at least once in $T$), use the Walk-Left Algorithm to walk back to the beginning of the text from this index
-\item The number of steps corresponds to the offset of $q$ in $T$
+\item If such an index exists (i.e. $q$ occurs at least once in $T$), use the Walk-Left Algorithm to walk back to the beginning of the text from this index i.e. until the algorithm reaches the \$ character.
+\item The number of steps it takes to do so corresponds to the offset of $q$ in $T$
 \end{enumerate}
 
-\paragraph{Performance Analysis}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{Figures/MATCH.png}
+    \caption{Finding position of $aac$ in example $T$ \footnote{REPRIS DE}}
+    \label{fig:match}
+\end{figure}
 
-As mentioned earlier in this document, the size of a genomic dataset is usually in the billion of entry range. Hence, we consider the following items in the previously defined process to be way too costly time or space-wise : 
-\begin{itemize}
-	\item Step 4 of the procedure requires a number of step linear to the length of $T$. Doing this may require billions of iterations over the lines $4$ and $5$ of Algorithm 1, meaning billions of memory access, which is way too much time consuming.
-	\item Storing the whole FM-Index requires storing $(N + 1)*\sigma$ values, with $N$ the length of $T$ and $\sigma$ the size of its alphabet $\Sigma$. This would require in our case at least 6 times the size of $T$ in memory space, which is way too big.
-	\end{itemize}
-	In order to reduce both those costs, the following solution is introduced :
+\paragraph{Optimization Benefits of the FM-Index over BWT}
+
+As mentioned earlier in this document, the size of a genomic dataset is usually in the billion of entry range. Hence, the structures showed in Figures \ref{fig:fmindex}, if used fully as displayed, may pose some issues. First, the number of step it might require \textsl{Walk-Left} to reach the beginning of $T$ is linear to the length of said $T$, thus implying potentially billions of iterations if the FM-Index $F$ is not used. Furthermore, storing the whole suffix array, along with the whole FM-Index for the \textsl{LF-Mapping} function requires two arrays, both with a number of row corresponding to the length $N$ of $T$ and a various number of columns. Even with a reduced alphabet size, storing those two structures would require an enormous amount of memory. \\
+
+From those observations, some optimization trade-off are made,  finding a middle ground between time performances and memory requirements :
 	\begin{itemize}
-		\item Keep samples of the suffix array index (e.g. every 32$^{th}$ row), when "walking" back along $T^{BWT}$ check if an entry exists for the current position, if yes, then add this value to the number of step already done to obtain the position of $q$ in $T$. This allows to Walk-Left algorithm to operate in a constant time, while limiting the space needed to store those values.
-		\item Keep only some samples of the FM-Index (e.g. one every 128 entries), referred as " checkpoints ". The LF function would now take the index of the current symbol in $T^{bwt}$ and find the closest surrounding checkpoint, then "walk" along $T^{bwt}$, counting the occurrences of the same symbol along the way and adding/subtracting (respectively if the closest checkpoint is above or below the current index) this count to the rank value stored in the checkpoint. This reduces greatly the space needed to store the index, while keeping a constant computation time for the LF function.
-		\end{itemize}
-		
+		\item [-] In order to speed the \textsl{Walk-Left} algorithm up, an idea would be to store the post-sorting suffix array indices, as shown in Figure \ref{fig:fmindex}. For a given position in the sorted suffix array, this index would indeed be the direct value of the position of the queried string in the original text. However, keeping in mind that memory is in this context a very valuable resources, storing all those values does not seem like a workable idea. An acceptable compromise would be to only keep samples \footnote{MIT} of this array (e.g. one entry every $32^{th}$ rows). Using this, the \textsl{Walk-Left} algorithm would "walk", until it comes across a sampled row. It would then suffice to add the number of steps it took to get to this position, added to the store sample, to obtain the desired position in the original text. This idea is illustrated in Figures \ref{fig:opti}.
+
+		\item [-] Along the same lines, instead of storing the whole \textsl{FM-Index} $F$, keep only some samples (e.g. one every 128 entries), which are later referred to as \textit{checkpoints}. For a given index $i$, if no checkpoints is available, read up or read down (depending on the closest checkpoint location), counting the occurrences of the symbol at $i$ along the way to add or subtract this count to the value eventually found.
+				\end{itemize}
+	
+Both those modifications, although coming from opposite situations, meet in the same trade-off : offering constant time computation while limiting the amount of required space to store those structures. An example of those modifications is presented in Figures \ref{fig:checkpoints} and \ref{fig:sdsa}.
+
+
 		\begin{figure}[h]
 			\centering
 			\begin{subfigure}{.5\textwidth}
 				\centering
 				\includegraphics[width=.5\linewidth]{Figures/sa.png}
-				\caption{SA sample example}
+				\caption{SA sample example  CHANGER}
 				\label{fig:sub1}
 				\end{subfigure}%
 				\begin{subfigure}{.5\textwidth}
 					\centering
 					\includegraphics[width=.8\linewidth]{Figures/CHECKPOINT.png}
-					\caption{Checkpoint example}
+					\caption{Checkpoint exampleR}
 					\label{fig:sub2}
 					\end{subfigure}
 					\caption{Illustration of the two proposed improvement}
 					\label{fig:test}
 					\end{figure}
-					
-					Conclure
-					
 									
 
 \section{Python Naive Implementation}
@@ -201,15 +198,15 @@ In order to get a better grasp of the concepts involved in the FM-Index implemen
 
 Good results have been reached using an adapted version of (CITER REPO), and this project has been used as a good basis for the less simple but way more precise \textsl{C++} implementation described in the next section. Below is a schema describing the software structure and execution flow.
 
-[Poser un genre d'UML]
+[Poser un genre d'UML- A FAIRE]
 
 Using a terminal interface, the program is used as follow : 
 
-[Mettre un screenshot]
+[Mettre un screenshot- Pareil]
 
 \section{C++ Implementation}
 
-All the software components of this project interacting with the board will be written in \textsl{C++}. This choice is based on legacy reasons (\textsl{REDS} environment) and conceptual reasons. The latter comes from the need to define a precise encoding of the \textsl{nucleotide reads} to be used on the FPGA system along with well defined and space-optimized data structures to store the \textsl{BWT} in the memory, the suffix array samples and the FM-Index checkpoints.
+All the software components of this project interacting with the board will be written in \textsl{C++}. This choice is based on the performance oriented aspect of this project, along with the need to precisely define binary data structures and the use of a pre-existing API implementing a communication interface with the used board, the \textit{Pico API}, further detailed in the next chapter. The need for precise and custom data structures comes from the need to define a precise encoding of the \textsl{nucleotide reads} to be used on the FPGA system along with well defined and space-optimized data structures to store the \textsl{BWT} in the memory, the suffix array samples and the FM-Index checkpoints. Those elements are showed in the next section, followed by an operating diagram and an example of execution.
 
 \subsection{Reads encoding and Data Structures}
 
@@ -296,6 +293,27 @@ uint64_t * suffix_idx;
 	
 	
 \end{minipage}
+
+\subsection{Output Files}
+
+This program is also used to create files that will be used in the hardware implementation of the FM-Index. Those files are all the required structures, as showed in figure \ref{fig:fmindex}. Those files are described in the following paragraphs. 
+
+[Pour chacune d'entre elles, je mettrais un exemple]
+
+\paragraph{Burrows-Wheeler Transform}
+
+This file contains the whole BWT of an input reference sequence. The symbols are encoded as described in the previous section and it will be placed in the main memory of the hardware module.
+
+\paragraph{Sampled FM-Index}
+
+This file contains all the sampled "checkpoints" mentioned earlier in this document. All rows contain 5 32bits values, each of which corresponds to the number of occurences for each symbol at a given position in the BWT. Those checkpoints are taken every 128$^{th}$ symbols.
+
+\paragraph{Sampled Suffix Array}
+
+This file contains samples of the suffix array, as mentioned in section 2.1.2.
+[...]
+
+\paragraph{}
 \vspace*{4mm}
 Below is a schema describing the program structure and execution flow along with the files it produces from the FM-Index structures :
 

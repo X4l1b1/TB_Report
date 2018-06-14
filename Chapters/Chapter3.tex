@@ -3,25 +3,36 @@
 \chapter{Hardware Implementation of the FM-Index} % Main chapter title
 
 \label{Chapter3} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}			
-The main scope of this thesis is to implement the aforementioned algorithm on a specific \textsl{FPGA} board, using a special type of memory to store the reference data, called \textsl{Hybrid Memory Cube} (HMC). Our hope is to attain a high parallelization factor, improving greatly performances over a large set of query. The different hardware tools used in this project will be described in this section.
+The main scope of this thesis is to implement the aforementioned algorithm on a specific \textsl{FPGA} board, using a special type of memory to store the reference data, called \textsl{Hybrid Memory Cube} (HMC). Further explained in the next section, the idea is to make the best out of both those tools' main advantages, a high capacity for parallelization.
+
 
 \section{Tools Introduction}
 
 \subsection{Hybrid Memory Cube and Micron AC-510}
 
 
-\textsl{Hybrid Memory Cube} (HMC) is a high-performance \textsl{RAM} interface for stacked \textsl{DRAM} memory. Combining \textsc{through-silicon vias} and \textsl{microbumps} (WIKIPEDIAA) to connect multiple layers of memory cells on top of each others, it offers very high throughput parallel serial bus' for i/o.
+\textsl{Hybrid Memory Cube} (HMC) is a high-performance \textsl{RAM} interface for stacked \textsl{DRAM} memory. Combining \textsc{through-silicon vias} and \textsl{microbumps} (WIKIPEDIA) to connect multiple layers of memory cells on top of each others, it offers very high throughput parallel serial bus' for random i/o's. In the scope of this project, it is an ideal candidate as to where to store all the references for the  FM-Index string matching algorithm as a parallel solution would indeed query for information potentially dispatched all over the memory.
 
-FAIRE UNE MEILLEURE DESCRIPTION 
 
-DECRIRE LA BOAR, PARLER DE PCI-EXPRESS AUSSI ET DE L'API
+\subsection{Project Architecture}
 
-\subsection{Vivado Project}
+This project is implemented in VHDL and included in a pre-existing project, the \textsl{Pico-Base Project}. [je ne sais pas trop quoi dire ...]
 
 \section{Specifications}
 
+[pareil ici, parler des entrées sorties, etc,.. un peu comme les specs des labos mais sans les contraintes de timing ?]
 
 \section{Model Conception}
+
+A first, non parallel, model conception is presented in the Figures
+
+\begin{figure}
+    \centering
+    \includegraphics{}
+    \caption{Caption}
+    \label{fig:my_label}
+\end{figure}
+
 
 \section{VHDL Implementation}
 
