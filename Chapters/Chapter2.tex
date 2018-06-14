@@ -338,12 +338,28 @@ This file contains samples of the suffix array, as mentioned in section 2.1.2.
 
 \paragraph{Mapped Sequences}
 
-Mapped sequences are returned in \textsl{SAM}  (Sequence Alignment/Map) format which provides a simple yet exhaustive description of each aligned read with respect to a reference
+Mapped sequences are returned in \textsl{SAM}  (Sequence Alignment/Map) format which provides a simple yet exhaustive description of each aligned read with respect to a reference text. Each rows contains 11 mandatory fields
+, described in Figure \ref{fig:samf}, used to describe the alignment characteristics (e.g. name, reference name, quality, etc.) \\
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.78]{Figures/SAMv1_3.png}
+    \caption{Mandatory fields of SAM format for each mapping}
+    \label{fig:samf}
+\end{figure}
 \vspace*{4mm}
+
+
+
 Below is a schema describing the program structure and execution flow along with the files it produces from the FM-Index structures :
 
-[Justifier les types, faire un UML ou quelque chose comme ca pour illustrer le fonctionnement]
+\begin{figure}
+    \centering
+    \includegraphics[scale = 0.5]{}
+    \caption{Caption}
+    \label{fig:my_label}
+\end{figure}
+
 
 Using a terminal interface, this program is used as follow :
 
