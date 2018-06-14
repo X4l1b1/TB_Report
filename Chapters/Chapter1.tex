@@ -22,8 +22,6 @@ With this in mind, this section will start by providing a further description of
 
 The size of those genomes therefore requires a large amount of processing to acquire, of space to store and most importantly, a huge amount of both to extract useful information from it. The goal of genomic data analysis is to determine the functions of specific genes, their origins and their evolution among many other informations. An efficient way to do so is to determine for each species a reference genome which can then be used to as a map. This method allows researcher to identify measured samples as belonging to those references and eventually enables the identification of specific sequences to precise species and biological functions. \\
 
-
-
 \section{Problematic Introduction}
 
 Genomic data is thus foreseen to become a major \textit{Big Data} issue, it's amount increasing at a faster rate than current data processing technologies and despite multiple highly optimized tools designed to increase processing throughput. The current pipeline, cannot seem to catch up. A coarse example of the genomic analysis pipeline is presented below. \\
@@ -31,15 +29,19 @@ Genomic data is thus foreseen to become a major \textit{Big Data} issue, it's am
 \begin{minipage}[t]{0.60\textwidth}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.2]{Figures/xkcd.png}
-    \caption{Illus}
+    \includegraphics[scale = 0.4]{Figures/pipeline.png}
+    \caption{Sera remplacé par une figure de la pipeline}
     \label{fig:analysispipe}
 \end{figure}
 \end{minipage}
 \begin{minipage}[t]{0.350\textwidth}
-Parler un peu de chaque stage et préciser que le bottleneck est quand même en grande partie sur le matching \\
+After being read, usual genome sequencer produce 5 types of symbols, the 4 nucleobases A, C, G, T and another symbol, $N$, present when the sequencer could not determine which base to assign to a read sample. Then comes the alignment, an essential step to any further work on those data. [......] \\
+
 \end{minipage}
 \vspace*{5mm}
+
+
+
 As an obligatory procedure to any further work on genomic data, increasing the performance on read alignment seems greatly needed. As mentioned earlier, processing those pieces of information means processing a huge volume of rather redundant textual data. This distinctive aspect makes room already for a lot of optimization including data compression and parallel processing and this is where another approach might be pertinent. \\
 
 Hardware accelerators are now a common practice\footnote{CITE} when confronted to a need of performance gain for a specific task in an information system. This approach seems indeed to be very efficient by providing a fully dedicated highly parallelizable system, meaning very little to no processing overhead, for those tasks. In this context, the sequence mapping of a plethora of short reads to one common reference seems like an ideal candidate for such an approach. This idea is the main scope of this project and will be further detailed in the next section.

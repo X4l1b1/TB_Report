@@ -3,32 +3,64 @@
 \chapter{Hardware Implementation of the FM-Index} % Main chapter title
 
 \label{Chapter3} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}			
-The main scope of this thesis is to implement the aforementioned algorithm on a specific \textsl{FPGA} board, using a special type of memory to store the reference data, called \textsl{Hybrid Memory Cube} (HMC). Our hope is to attain a high parallelization factor, improving greatly performances over a large set of query. The different hardware tools used in this project will be described in this section.
+The main scope of this thesis is to implement the aforementioned algorithm on a specific \textsl{FPGA} board, using a special type of memory to store the reference data, called \textsl{Hybrid Memory Cube} (HMC). Further explained in the next section, the idea is to make the best out of both those tools' main advantages, a high capacity for parallelization.
+
 
 \section{Tools Introduction}
 
 \subsection{Hybrid Memory Cube and Micron AC-510}
 
 
-\textsl{Hybrid Memory Cube} (HMC) is a high-performance \textsl{RAM} interface for stacked \textsl{DRAM} memory. Combining \textsc{through-silicon vias} and \textsl{microbumps} (WIKIPEDIAA) to connect multiple layers of memory cells on top of each others, it offers very high throughput parallel serial bus' for i/o.
+\textsl{Hybrid Memory Cube} (HMC) is a high-performance \textsl{RAM} interface for stacked \textsl{DRAM} memory. Combining \textsc{through-silicon vias} and \textsl{microbumps} (WIKIPEDIA) to connect multiple layers of memory cells on top of each others, it offers very high throughput parallel serial bus' for random i/o's. In the scope of this project, it is an ideal candidate as to where to store all the references for the  FM-Index string matching algorithm as a parallel solution would indeed query for information potentially dispatched all over the memory.
 
-FAIRE UNE MEILLEURE DESCRIPTION 
 
-DECRIRE LA BOAR, PARLER DE PCI-EXPRESS AUSSI ET DE L'API
+\subsection{Project Architecture}
 
-\subsection{Vivado Project}
+This project is implemented in VHDL and included in a pre-existing project, the \textsl{Pico-Base Project}. [je ne sais pas trop quoi dire ...]
 
 \section{Specifications}
 
+[pareil ici, parler des entrées sorties, etc,.. un peu comme les specs des labos mais sans les contraintes de timing ?]
 
 \section{Model Conception}
 
+A first, non parallel, model conception is presented in the Figures \ref{fig:seqschema} and \ref{fig:fsm}.\\
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{Figures/schema_bloc.png}
+    \caption{Schema bloc of the project Top-Level}
+    \label{fig:seqschema}
+\end{figure}
+
+\begin{description}
+\item [PCI Interface] - This bloc is the interface between the \textsl{PCI Express Bus} and the FM-Index bloc. It receives short reads and command from a linked computed. In this interface, the FM-Index bloc is a slave, that wait for commands and data to start working. A FIFO is already implemented and this bloc consumes what is put into it. When a result is ready, it is placed in another FIFO that can be accessed by the computer master on the other end.
+\item [HMC Interface] - Similarly to the previous bloc, this one is the interface between the board main memory and the FM-Index bloc. Only accessed through the \textsl{Memory Query} bloc, it is used to query data, may it be checkpoints entries, BWT entries of Sampled Suffix array elements. All transactions are 128bits wide and the interpretation of the received data in the \textsl{Memory Query} bloc.
+\item [Memory Query] - This bloc is used by the FM-Index to issue all the different queries it might need along the string matching process, which means it implements all 3 "functions" needed by the FM-Index : $Occ$, $Count$ (thus $LF$) and $Walk-Left$ (with the sampled suffix array). Those queries can be about "checkpoints", BWT symbol or sampled suffix array entries and the type of said requests is specified by the \textrm{req\_type} signal. This bloc is then responsible for interpreting the received data and transmitting it in the appropriate form to the FM-Index bloc.
+\end{description}
+
+\subsection{FM-Index - UC}
+
+This section illustrates the internal functioning of the \textsl{FM-Index} bloc, which is a hierarchical FSM, dividid in 4 main steps as described below and illustrated in Figures \ref{fig:fsm}.
+\begin{description}
+\item [Read Sequence -] This loop is used to consume data from the \textsl{PCI Express Interface} in order to load a short read to align in the reference text along with an ID value associated to it.
+\item [Bounds] - This loop scans the input sequence $q$ and, at each iteration, queries the \textsl{HMC} memory to update $top$ and $bot$. Note that is corresponds the to Algorithm \ref{alg:match}.
+\item [Walk Left] - This loop corresponds to Algorithm \ref{alg:WL}. It is only reached when the precedent loop ends up with a valid range for $q$ in the suffix array, i.e. $q$ exists in the reference text. Then again, at each iteration, the HMC is queried to update the index.
+\item [Send Result] - This last part of the FSM sends back the results, whether $q$ was found or not, back to the result FIFO in the \textsl{PCI Express Interface}. This result contains the position (special value if not found), along with the ID corresponding to the query, stored in the \textsl{Read Sequence} step.
+\end{description}
+\begin{figure}[H]
+ \includegraphics[scale = 0.36]{Figures/MSS.png}
+    \caption{Global view of the FM-Index FSM}
+    \label{fig:fsm}
+\end{figure}
+
+
 \section{VHDL Implementation}
 
+[SOOON]
 
 \section{Test \& Validation}
 
-
+[LESS SOOON]
 
 
 
