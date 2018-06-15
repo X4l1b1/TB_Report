@@ -78,10 +78,10 @@ headsepline, % Uncomment to get a line under the header
 }
 \usepackage[font=small,labelfont=bf]{caption} % Required for specifying captions to tables and figures
  \usepackage{pgfgantt}
-\usepackage[backend=bibtex,style=authoryear,natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
-\addbibresource{example.bib} % The filename of the bibliography
+%\usepackage[backend=bibtex,style=authoryear,natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
+%\addbibresource{example.bib} % The filename of the bibliography
 \definecolor{bleu}{RGB}{37,104,162}
-\usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
+%\usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
 \renewcommand{\baselinestretch}{1.2}
 %----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
@@ -277,8 +277,8 @@ BLABLABLA
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
 
-\printbibliography[heading=bibintoc]
-
+\bibliography{example.bib}
+\bibliographystyle{unsrt}
 %----------------------------------------------------------------------------------------
 
 \end{document}  
