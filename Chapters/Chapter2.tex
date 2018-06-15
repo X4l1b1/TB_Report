@@ -50,8 +50,8 @@ The figure \ref{fig:bwt} above illustrates the process of the \textsl{BWT}, it w
 
 
 From a compression perspective, the $T^{bwt}$ result is a way better candidate than its original form as it sees most of similar characters regrouped, hence allowing shorter encoding for those sequences\footnote{http://www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.pdf}. Furthermore, properties 1, 2 and 5 indicate an easy transition, if needed, back to the original text  using the  \textsl{LF Mapping} illustrated in figure \ref{fig:LF} and formally defined in equation \ref{eq:LF}. \\
-\newpage
-For $Occ$ an array containing, for each symbol $c$ of the alphabet $\Sigma$, the index of its first occurence in the first column $F$ and $Count(i, c)$, a function returning the number of occurences of $c$ in $F$ at given index $i$, we can define the $Last-to-First$ mapping as follow :
+
+For $Occ$ an array containing, for each symbol $c$ of the alphabet $\Sigma$, the index of its first occurence in the first column $F$ and $Count(i, c)$, a function returning the number of occurences of $c$ in $F$ at given index $i$, we can define the $LastToFirst$ mapping as follow :
 \begin{equation}
     LF(i, c) = Occ[c] + Count(i, c)
     \label{eq:LF}
@@ -60,12 +60,12 @@ For $Occ$ an array containing, for each symbol $c$ of the alphabet $\Sigma$, the
 
 \begin{minipage}[t]{0.5\textwidth}
     \begin{figure}[H]
-\hspace{-15mm}  \includegraphics[scale = 0.5]{Figures/LF.png}
-  \caption{LF-Mapping of $3^{rd}$ occurrence of $a$ from last column}
+\hspace{-15mm}  \includegraphics[scale = 0.45]{Figures/LF.png}
+  \caption{LF-Mapping of $3^{rd}$ occurrence of $a$ }
     \label{fig:LF}
 \end{figure}
 \end{minipage}
-\begin{minipage}[t]{0.4\textwidth}
+\begin{minipage}[t]{0.45\textwidth}
         This figure illustrates how the mapping is done : from the fact that character ranking are the same in both last and first column (and all the others for that matter), the \textsl{LF-Mapping} algorithm enables retrieval of the position in $F$ for any character in $L$. This method is used in the \textsl{Walk-Left} algorithm to reconstruct the original text, which is thereafter further detailed in figure \ref{fig:walkleft}.
 \end{minipage}
 \vspace*{5mm}
@@ -321,8 +321,6 @@ On the other hand, the files containing the shorts reads to map to the reference
 
 This program is also used to create files that will be used in the hardware implementation of the FM-Index. Those files are all the required structures, as showed in figure \ref{fig:fmindex}. Those files are described in the following paragraphs. 
 
-[Pour chacune d'entre elles, je mettrais un exemple]
-
 \paragraph{Burrows-Wheeler Transform}
 
 This file contains the whole BWT of an input reference sequence. The symbols are encoded as described in the previous section and it will be placed in the main memory of the hardware module.
@@ -334,7 +332,6 @@ This file contains all the sampled "checkpoints" mentioned earlier in this docum
 \paragraph{Sampled Suffix Array}
 
 This file contains samples of the suffix array, as mentioned in section 2.1.2.
-[...]
 
 \paragraph{Mapped Sequences}
 
@@ -349,23 +346,19 @@ Mapped sequences are returned in \textsl{SAM}  (Sequence Alignment/Map) format w
 \end{figure}
 \vspace*{4mm}
 
-
+This format will allow a good result structure while keeping the formatting process rather simple and the amount of information to keep along the processing rather low. 
 
 Figure \ref{fig:cpp_workflow} describes the program structure and execution flow along with the files it produces from the FM-Index structures :
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.4]{Figures/cpp_workflow.png}
+    \includegraphics[scale = 0.3]{Figures/cpp_workflow.png}
     \caption{Illustration of the C++ software Execution}
     \label{fig:cpp_workflow}
 \end{figure}
 
 
-Using a terminal interface, this program is used as follow :
-
-[Poser un screenshot d'execution]
-
 
 \section{Tests \& Validation}
 
-[Benchmark pour C++ ??]
+[Benchmark \& Tests for C++]
