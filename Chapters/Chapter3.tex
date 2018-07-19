@@ -277,3 +277,9 @@ Using the checkpoints, Suffix-Array and BWT references to generate memory stimul
 
 As a result of those tests and simulation, several timing issues have been detected. Indeed, the use of register to store the data and signals as flags to notify other blocks of data availability led to several synchronization problems. 
 
+\begin{figure}[H]
+    \centering
+    \hspace*{-30mm}\includegraphics[scale = 0.4]{Figures/LF_timing_issue.png}
+    \caption{Example of Signal and Data Synchronization Issue}
+    \label{fig:lf_timing}
+\end{figure}
