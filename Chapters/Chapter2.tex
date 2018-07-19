@@ -14,17 +14,17 @@
 %\end{figure*}
 %\vspace*{15mm}
 
-With the observations afore stated about the nature and form of the data in the context of genomics, it seems obvious that an appropriate data structure for those, along with an efficient algorithm, might to a serious gain in performance in the short reads alignments. The \textsl{FM-Index} is a lossless compression algorithm based on the \textsl{Burrows-Wheeler Transform} that offers such gains by reorganizing the data in a way that may reduce both memory needs and latency of the mapping process. 
+With the observations foretasted about the nature and form of the data in the context of genomics, it seems obvious that an appropriate data structure for those, along with an efficient algorithm, might to a serious gain in performance in the short reads alignments. The \textsl{FM-Index} is a lossless compression algorithm based on the \textsl{Burrows-Wheeler Transform} that offers such gains by reorganizing the data in a way that may reduce both memory needs and latency of the mapping process. 
 
 Both those concepts are the subject of the next sections, followed by a \textsl{Python} implementation, which aims to better illustrate the whole read alignment process, and a \textsl{C++} implementation of the same algorithm which will be then used for the hardware implementation.
 
 \section{Theoretical Concepts}
 
-Introduced by \textsl{Michael Burrows} and \textsl{David Wheeler} in 1994, the \textsl{Burrows-Wheeler Transform} (BWT) rearranges the characters of a \textit{string} into sequences of similar characters by a series linear operations. Although it does not reduce the size of the input data, the rearrangement thus obtained gets greatly improved compression results. Furthermore, the easy reversibility of the process substantially facilitate data manipulation employed in sequence alignment, such as finding the original position from the determined one in the transform. This process is further detailed in the next section.
+Introduced by \textsl{Michael Burrows} and \textsl{David Wheeler} in 1994, the \textsl{Burrows-Wheeler Transform} (BWT) rearranges the characters of a \textit{string} into sequences of similar characters by a sequence of linear operations. Although it does not reduce the size of the input data, the rearrangement thus obtained gets greatly improved compression results. Furthermore, the easy reversibility of the process substantially facilitate data manipulation employed in sequence alignment, such as finding the original position from the determined one in the transform. This process is further detailed in the next section.
 
 \subsection{Burrows-Wheeler Transform Algorithm \& LF-Mapping}
 
-The transform can be divided in 4 main steps\footcite{BWT0} :
+The transform can be divided in 4 main steps \footnote{BWT0} :
 \begin{enumerate}
 \item Append a special character (usually represented as a \$), lexicographically smaller than any others, at the end of the input string \textrm{T}.
 \item Construct a square matrix $M_T$ with each being another iteration of a left rotating shift applied to the original string.
@@ -76,7 +76,7 @@ Now that this concept is well defined, the next section will aim to illustrate h
 
 \subsection{FM-Index}
 
-An \textsl{FM-Index} is a lossless text compression based on the \textsl{BWT}\footcite{FM_INDEX}, it was created by \textsl{Paolo Ferragina} and \textsl{Giovanni Manzini} whom refer to it as an \textit{"opportunistic data structure"}. The design of this index is based upon the combination of the BWT and the suffix array data structure, displayed in red in figure \ref{fig:bwt}.\footnote{https://pdfs.semanticscholar.org/d896/e62b6cbfd623d1d9041f90b7f9e41d1451a7.pdf}
+An \textsl{FM-Index} is a lossless text compression based on the \textsl{BWT}\footcite{FM\_INDEX}, it was created by \textsl{Paolo Ferragina} and \textsl{Giovanni Manzini} whom refer to it as an \textit{"opportunistic data structure"}. The design of this index is based upon the combination of the BWT and the suffix array data structure, displayed in red in figure \ref{fig:bwt}.\footnote{https://pdfs.semanticscholar.org/d896/e62b6cbfd623d1d9041f90b7f9e41d1451a7.pdf}
 
 \paragraph{Creating an FM-Index}
 
@@ -98,7 +98,7 @@ Note that in this case, $F$ replaces the function $Count$ described in the previ
 \end{minipage}
 
 
-\paragraph{String Matching and Walk-Left Algorithms} To now implement the string search in the FM-Index, two algorithms used. The first, initially used to fully revert the BWT, can be used to determine the position of a string in the original text from its position in the suffix array. This position can be determined using the second algorithm, which, given a string $q$ browse the suffix array using LF-Mapping, in order to determine a position range in which $q$ is located. Note that this interval might be empty, in which case $T$ does not contain $q$ or of length $\geq$ 1, in which case its length corresponds to the number of occurences of $q$ in $T$. \\
+\paragraph{String Matching and Walk-Left Algorithms} To now implement the string search using the FM-Index, two algorithms are used. The first, initially used to fully revert the BWT, can be exploited to determine the position of a string in the original text from its position in the suffix array. This position can be determined using the second algorithm, Walk-Left, which, given a string $q$ scans the suffix array using LF-Mapping, in order to determine a position range in which $q$ is located. Note that this interval might be empty, in which case $T$ does not contain $q$ or of length $\geq$ 1, in which case its length corresponds to the number of occurences of $q$ in $T$. \\
 Those algorithms are described in \ref{alg:WL} and \ref{alg:match} and a graphical example of execution are provided by Figures \ref{fig:walkleft} and \ref{fig:match}.
 
 \begin{figure}[H]
@@ -170,7 +170,7 @@ From those observations, some optimization trade-off are made,  finding a middle
 		\item [-] Along the same lines, instead of storing the whole \textsl{FM-Index} $F$, keep only some samples (e.g. one every 128 entries), which are later referred to as \textit{checkpoints}. For a given index $i$, if no checkpoints is available, read up or read down (depending on the closest checkpoint location), counting the occurrences of the symbol at $i$ along the way to add or subtract this count to the value eventually found.
 				\end{itemize}
 	
-Both those modifications, although coming from opposite situations, meet in the same trade-off : offering constant time computation while limiting the amount of required space to store those structures. An example of those modifications is presented in Figures \ref{fig:checkpoints} and \ref{fig:sdsa}.
+Both those modifications, although coming from opposite situations, meet in the same trade-off : offering constant time computation while limiting the amount of required space to store those structures. An example of those modifications is presented in Figures \ref{fig:checkpoints} and \ref{fig:ssa}.
 
 
 		\begin{figure}[h]
@@ -178,13 +178,13 @@ Both those modifications, although coming from opposite situations, meet in the 
 			\begin{subfigure}{.5\textwidth}
 				\centering
 				\includegraphics[width=.5\linewidth]{Figures/sa.png}
-				\caption{SA sample example  CHANGER}
+				\caption{SA sample example}
 				\label{fig:sub1}
 				\end{subfigure}%
 				\begin{subfigure}{.5\textwidth}
 					\centering
 					\includegraphics[width=.8\linewidth]{Figures/CHECKPOINT.png}
-					\caption{Checkpoint exampleR}
+					\caption{Checkpoint example}
 					\label{fig:sub2}
 					\end{subfigure}
 					\caption{Illustration of the two proposed improvement}
@@ -198,11 +198,6 @@ In order to get a better grasp of the concepts involved in the FM-Index implemen
 
 Good results have been reached using an adapted version of (CITER REPO), and this project has been used as a good basis for the less simple but way more precise \textsl{C++} implementation described in the next section. Below is a schema describing the software structure and execution flow.
 
-[Poser un genre d'UML- A FAIRE]
-
-Using a terminal interface, the program is used as follow : 
-
-[Mettre un screenshot- Pareil]
 
 \section{C++ Implementation}
 
@@ -220,12 +215,12 @@ Considering there are 4 different nucleotides within any DNA sequence, adding th
 	\hline
 		Name & Encoding \\
 		\hline 
-		"\$" & 000 \\
+		"\$" & 001 \\
 		A & 010 \\
-		C & 100 \\
-		G & 101 \\
+		C & 011 \\
+		G & 100 \\
+		N & 101 \\
 		T & 110 \\
-		N & 111 \\
     \hline
 	\end{tabular}
 \end{minipage}
@@ -235,12 +230,12 @@ Considering there are 4 different nucleotides within any DNA sequence, adding th
 /* Type on 8 bits (only last 3 used) */
 typedef unsigned char nucl_read; 
 /* $ character */
-static const nucl_read eos    = 0x00;	
+static const nucl_read eos    = 0x01;	
 static const nucl_read a_read = 0x02;
-static const nucl_read c_read = 0x04;
-static const nucl_read g_read = 0x05;
+static const nucl_read c_read = 0x03;
+static const nucl_read g_read = 0x04;
+static const nucl_read n_read = 0x05;
 static const nucl_read t_read = 0x06;
-static const nucl_read n_read = 0x07;
     \end{minted}
 \begin{lstlisting}
 
@@ -249,8 +244,7 @@ static const nucl_read n_read = 0x07;
 \end{minipage}
 \vspace*{3mm}
 
-Dire un mot sur que quand meme voila c'est cool.
-	
+This encoding allows an ordering similar to a lexicographical one that would be generated directly from a text input. Furthermore, two combinations aren't used : \textrm{"000"} and \textrm{"111"}. The latter will not be considered in this project but the first will show to be useful to mark the end of any sequences by a simple padding with \textrm{'0's}.
 
 \paragraph{Data Structures}
 
@@ -297,7 +291,7 @@ uint64_t * suffix_idx;
 \subsection{Input Files}
 
 \paragraph{Reference Genome}
-The file containing the reference genome is expected to be in \textsl{FASTA} format \footnote{https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=BlastHelp}. The main advantage of this choice is the format's simplicity. The first line contains the description of the following data while the rest of the file contains only nucleic amino acis (namely A, C, G, T, N and U). A short example of this format is given in Figure \ref{fig:fasta}.
+The file containing the reference genome is expected to be in \textsl{FASTA} format \footnote{https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=BlastHelp}. The main utility of this choice is the format's simplicity. The first line contains the description of the following data while the rest of the file contains only nucleic amino acis (namely A, C, G, T, N and U). A short example of this format is given in Figure \ref{fig:fasta}.
 
 \begin{figure}[H]
     \centering
@@ -327,7 +321,7 @@ This file contains the whole BWT of an input reference sequence. The symbols are
 
 \paragraph{Sampled FM-Index}
 
-This file contains all the sampled "checkpoints" mentioned earlier in this document. All rows contain 5 32bits values, each of which corresponds to the number of occurences for each symbol at a given position in the BWT. Those checkpoints are taken every 128$^{th}$ symbols.
+This file contains all the sampled "checkpoints" mentioned earlier in this document. All rows contain five 32-bit values, each of which corresponds to the number of occurences for each symbol at a given position in the BWT. Those checkpoints are taken every 128$^{th}$ symbols. This choice is based on the actual size of each checkpoints (5*32 bits), which is non-negligible and the fact that a simple scan of the \textit{BWT} from the current position to the nearest checkpoint is enough to determine the actual count value. Hence, providing constant time complexity with limited space cost.
 
 \paragraph{Sampled Suffix Array}
 

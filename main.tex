@@ -111,9 +111,9 @@ headsepline, % Uncomment to get a line under the header
 \subject{} % Your subject area, this is not currently used anywhere in the template, print it elsewhere with \subjectname
 \keywords{} % Keywords for your thesis, this is not currently used anywhere in the template, print it elsewhere with \keywordnames
 \university{\href{http://www.university.com}{HEIG-VD}} % Your university's name and URL, this is used in the title page and abstract, print it elsewhere with \univname
-\department{\href{http://department.university.com}{\textcolor{bleu}{ } }} % Your department's name and URL, this is used in the title page and abstract, print it elsewhere with \deptname
+\department{\href{http://department.university.com}{\textcolor{bleu}{Information and Communication Department} }} % Your department's name and URL, this is used in the title page and abstract, print it elsewhere with \deptname
 \group{\href{http://researchgroup.university.com}{\textcolor{bleu}{ }}} % Your research group's name and URL, this is used in the title page, print it elsewhere with \groupname
-\faculty{\href{http://unil.ch}{\textcolor{bleu}{Faculté d'Informatique Embarquée}}} % Your faculty's name and URL, this is used in the title page and abstract, print it elsewhere with \facname
+\faculty{\href{http://unil.ch}{\textcolor{bleu}{Embedded Computing Orientation}}} % Your faculty's name and URL, this is used in the title page and abstract, print it elsewhere with \facname
 \setcounter{chapter}{-1}
 \AtBeginDocument{
 \hypersetup{pdftitle=\ttitle} % Set the PDF's title to your title
@@ -153,17 +153,18 @@ headsepline, % Uncomment to get a line under the header
 \begin{flushright} \large
 \emph{Supervisor:} \\
 \href{http://www.jamessmith.com}{\textcolor{red}{\supname}} \linebreak
-\textit{\small{HEIG-VD}} \linebreak  % Supervisor name - remove the \href bracket to remove the link
+\textit{\small{Haute École d'Ingénieurie et de Gestion du Canton de Vaud}} \linebreak  % Supervisor name - remove the \href bracket to remove the link
 
 \emph{Expert:} \\
-\href{http://www.jamessmith.com}{\textcolor{bleu}{????}} \linebreak 
-\textit{\small{???????}}
+\href{http://www.jamessmith.com}{\textcolor{bleu}{M. Andres UPEGUI}} \linebreak 
+\textit{\small{University of Applied Sciences of Western Switzerland}}
 \end{flushright}
 \end{minipage}\\[1.5cm]
 
-\large \textit{Presented at the 2018 Autumn session under the supervision \linebreak of rtProf. Yann Thoma}\\[0.3cm] % University requirement text
+\large \textit{Presented at the 2018 Autumn session under the supervision \linebreak of \\ \vspace*{3mm} Prof. Yann Thoma}\\[0.3cm] % University requirement text
 \textit{at the}\\[0.4cm]\textcolor{bleu}{
-Faculté d'Informatique Embarquée \\ HEIG-VD}\\[1cm] % Research group name and department name
+Embedded Computing Orientation \\ \vspace*{3mm}
+\textcolor{black}{Information \& Communication Department} \\ \vspace*{3mm} HEIG-VD}\\[1cm] % Research group name and department name
 {\large \today}\\ % Date
 %\includegraphics{Logo} % University/department logo - uncomment to place it
 \vfill
@@ -205,27 +206,7 @@ Faculté d'Informatique Embarquée \\ HEIG-VD}\\[1cm] % Research group name and 
 BLABLABLA
 \end{extraAbstract}
 \newpage
-\begin{center}
-	\Huge
-	Glossary
-	\normalsize
-\end{center}
-\hspace*{-10mm}\begin{tabular}{|l|p{5cm}|p{8.5cm}|}
-	\hline
-\rowcolor{black}\hfill\textcolor{white}{	\textbf{Abréviation}}&\textcolor{white}{\textbf{Terme}}&\textcolor{white}{\textbf{Définition}}\\
-	\hline
-	HMC & Hybrid Memory Cube & Mémoire constituée de couches empilées de mémoire de type DRAM. \\
-	\hline
-	BWT & Burrows-Wheeler Transform & Prétraitement des données \href{https://fr.wikipedia.org/wiki/Transform%C3%A9e_de_Burrows-Wheeler}{voir ici} \\
-	\hline
-	FM-Index & Full-text Minute-size Index  & Principe de compression sans perte, \href{https://fr.wikipedia.org/wiki/FM-index}{Voir ici} \\
-\hline
-	REDS & Reconfigurable Embedded Digital System & Institut de prestige de l'HEIG \\
-\hline
-	PEHAGA & Power-Efficient Hardware Acceleration of Genomic Data & ??? \\
-	\hline
-\end{tabular}
-\newpage
+
 %----------------------------------------------------------------------------------------
 %	LIST OF CONTENTS/FIGURES/TABLES PAGES
 %----------------------------------------------------------------------------------------
@@ -253,7 +234,7 @@ BLABLABLA
 \include{Chapters/Chapter1}
 \include{Chapters/Chapter2} 
 \include{Chapters/Chapter3}
-\include{Chapters/ChapterTemp}
+% \include{Chapters/ChapterTemp}
 \include{Chapters/Chapter4}
 \include{Chapters/Chapter5} 
 \include{Chapters/Chapter6} 
