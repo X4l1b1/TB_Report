@@ -101,15 +101,179 @@ To simulate the memory, a reference dataset has been created using the previousl
 \subsection{Global Structure}
 
 \begin{figure}[H]
- \includegraphics[scale = 0.4]{Figures/}
-    \caption{Global view of the FM-Index FSM}
-    \label{fig:fsm}
+ \includegraphics[scale = 0.4]{Figures/TB_struct.png}
+    \caption{Global Structure of each Testbench}
+    \label{fig:Tb_struct}
 \end{figure}
 
-Each testbench is defined according to the same structure, as depicted in Figure \ref{fig:Tb_struct}. For each DUT, a record is defined for each input sender and output receiver
+Each testbench is defined according to the same structure, as depicted in Figure \ref{fig:Tb_struct}. For each DUT, a record is defined for each input sender and output receiver. For each input record, a process is defined to generate stimuli and for each output record, an equality operator is defined, allowing the \textrm{Verification} process to check the correctness of those output signals. \\
+All DUT receive input from another internal block, referred as FM, which expects a final result. In order to get those results, most blocks need to interact with an external resource (such as a memory, a bus, etc.). Thus, those being independent in the computing process, it has been decided to completely separate those signals both in stimulation and verification. \\
+
+Finally, every testbench includes two processes to generate a clock signal and an initial reset signal. The first is stop upon the termination of the FM-stimuli. \\
+
+The following paragraphs further detail those different input and output for each block and summarize the operations performed.
 
 
+\subsection{Read PCI}
+\vspace*{3mm}
+\begin{center}
+    \begin{tabular}{|c|c|}
+\hline
+  Input Src   &  Description \\
+  \hline
+   Stream  & Incoming data from the computer master (short reads) \\
+   FM-Index & Result data to send back and data request \\
+   \hline
+\end{tabular}
+\end{center}
+\vspace*{5mm}
+
+Upon availability of incoming data from the stream, the block should consume it as soon as the FM-Index is ready to process a new sequence. The other way, upon availability of a result from the FM-Index, it should send it out on the stream as soon a it becomes available.
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+  Output Dest   &  Description \\
+  \hline
+   Stream  & Result Data (position, id) \\
+   FM-Index & Data to process (id, size, sequence) \\
+   \hline
+\end{tabular}
+\end{center}
+\vspace*{5mm}
+Data from received from the stream should be parsed correctly before being sent out to the FM-Index, meaning extracting the sequence's size and ID from the first packet and then fill the buffer line by line according to the previously received size. The other way around, it should push on the bus the final results provided by the FM-Index. \\
 
 
+Following those properties, two cases are implemented in order to fully verify them :
+\begin{itemize}
+    \item [-] Simulate an incoming sequence from the stream and verify the FM-Index outputs
+    \item [-] Simulate incoming results from the FM-Index and verify the stream outputs.
+\end{itemize}
 
+
+\subsection{Bounds}
+\vspace*{3mm}
+\begin{center}
+    \begin{tabular}{|c|c|}
+\hline
+  Input Src   &  Description \\
+  \hline
+   FM-Index  & Validity flag, sequence row and size \\
+   Last-First & Position result from made requests \\
+   \hline
+\end{tabular}
+\end{center}
+\vspace*{5mm}
+
+When a new sequence becomes available, the DUT should immediately start to scann it, starting from the initial positions and, for each symbol, update those position using the Last-First Mapping algorithm (Eq. \ref{eq:LF}). Upon the reception of such a result, it should either go to the next symbol, request the next line if the current has been scanned, or terminate if all the sequence has been read, returning the final \textsl{top} and \textsl{bottom} positions. Note that the termination of the algorithm might be caused by obtaining an empty range, in which case the DUT should not keep scanning. \\
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+  Output Dest   &  Description \\
+  \hline
+   FM-Index  & Validity flag, sequence row and size \\
+   Last-First & Position result from made requests \\
+   \hline
+\end{tabular}
+\end{center}
+\vspace*{5mm}
+For each symbol in the sequence, the correct queries should be made to Last-First, meaning the correct position and symbol. Finally, upon termination of the algorithm, the correct position should be returned.
+
+Following those properties, two cases are implemented in order to fully verify them, using the LF references to generate Last-First stimuli :
+\begin{itemize}
+    \item [-] Simulate an incoming sequence present in the text and generate LF results upon request. Upon termination, verify the position outputs.
+    \item [-]  Simulate an incoming sequence not present in the text and generate LF results upon request. Make sure of the early termination (less loop iteration than there are symbol in the sequence).
+\end{itemize}
+
+\subsection{Last-First}
+
+\vspace*{3mm}
+\begin{center}
+    \begin{tabular}{|c|c|}
+\hline
+  Input Src   &  Description \\
+  \hline
+   FM-Index  & Position, symbol and operation type \\
+   Memory & Position or BWT line \\
+   \hline
+\end{tabular}
+\end{center}
+\vspace*{5mm}
+
+Upon a new request, the DUT should prepare the correct request to the memory. Upon reception of requested data from memory, it should use it to correctly continue its execution.
+
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+  Output Dest   &  Description \\
+  \hline
+   FM-Index  & Position or BWT symbol \\
+   Last-First & Position or symbol \\
+   Memory & Position and request type \\
+   \hline
+\end{tabular}
+\end{center}
+
+Depending on the desired data, either a checkpoint position or a sample of the BWT, the correct outputs should be given to the memory interface. Upon termination of the algorithm, the correct value should be given to the FM-Index.
+
+Following those properties, two cases are implemented in order to fully verify them, using the checkpoints and BWT references to generate memory stimuli :
+\begin{itemize}
+    \item [-] Simulate a position request and verify the sequence of request made to the memory in addition to the final results. 
+    \item [-] Do the same simulatin a symbol request.
+\end{itemize}
+\subsection{Walk-Left}
+
+\vspace*{3mm}
+\begin{center}
+    \begin{tabular}{|c|c|}
+\hline
+  Input Src   &  Description \\
+  \hline
+   FM-Index  & Position, symbol and operation type \\
+   Last-First & Position and symbol \\
+   Memory & Suffix-Array sample \\
+   \hline
+\end{tabular}
+\end{center}
+\vspace*{5mm}
+
+Upon the availability of new data, the DUT should start immediatly to execute its algorithm. It should updates internal registers upon reception of Last-First (and potentially terminate) and terminate upon reception of memory data (retrieving a Suffix-Array sample leading to the final result).
+
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+  Output Dest   &  Description \\
+  \hline
+    FM-Index  & Position of the short read in the text \\
+   Last-First & Position, symbol and request type
+   Memory & Position \\
+   \hline
+\end{tabular}
+\end{center}
+
+The DUT algorithm should be able to query symbols and positions from Last-First and a Suffix-Array from the memory. Upon termination, it should provide the correct value to the FM-Index interface.
+
+Following those properties, several cases involving multiple positions are implemented, using the Suffiy-Array, the LFs and BWT references to generate memory stimuli. A loop is then done on a pre-defined array of test values.
+
+\subsection{FMIndex}
+
+\vspace*{3mm}
+\begin{center}
+    \begin{tabular}{|c|c|c|}
+\hline
+  Interfaces & Direction  &  Description \\
+  \hline
+   Stream & In  & Short reads sequence with ID and size \\
+   Stream & Out & Position in text T \\
+   \hline
+\end{tabular}
+\end{center}
+\vspace*{5mm}
+
+Upon the availability of new data on the input stream, the DUT and its component should start to process those data. A result must be reached and sent on the ouput stream.
+
+Using the checkpoints, Suffix-Array and BWT references to generate memory stimuli, two case are implemented, one involving a input present in the text, the position of which is then verified. And another one involving an input not present in the text.
+
+\section{Results}
+
+As a result of those tests and simulation, several timing issues have been detected. Indeed, the use of register to store the data and signals as flags to notify other blocks of data availability led to several synchronization problems. 
 
