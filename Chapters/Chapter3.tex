@@ -43,9 +43,20 @@ This section illustrates the internal functioning of the \textsl{FM-Index} bloc,
 \subsection{Read\_Stream}
 
 
+
 This block is responsible for reading the received data by the streaming bus. Those data start by the \textsl{short read} ID and size, followed by the actual sequence, already encoded and inverted. The first information are stored in registers and the short read itself is placed into a buffer : once a line is ready, the global FSM is notified, and the reading continue.
 
 \subsection{Bounds}
+
+
+\begin{figure}[H]
+    \centering
+   \includegraphics[scale = 0.4]{Figures/BOUNDS_DIAG.png}
+    \caption{Bounds Bloc Diagram}
+    \label{fig:bounds_diag}
+\end{figure}
+
+
 
  This block reads this sequence from the buffer on line at a time, once all elements from it have been used, it notifies the upper level it is ready for the next one and continues until it has read \textrm{size} elements. For each read symbol iteration, the top and bottom position outputs are updated one after the other. After each update, both the number of read symbol and the new positions are evaluated and just like in Algorithm \ref{alg:match}, if at some point the interval $ [ top,bottom ] $ is empty, the loop is terminated the FSM goes back to waiting for a new sequence.
 
@@ -68,6 +79,13 @@ If the two positions are still correct and the whole row has not been read, it g
 
 \subsection{Walk-Left}
 
+
+Upon termination of the \textsl{Bounds} algorithm, this block is notified that a new data is available. At the present time, only the \textsl{top} position is used. Hence, only one match - given there are at least one - is returned for each provided short read. As presented in Algorithm \ref{alg:WL}, this block first checks if there is a Suffix-Array index sample available for the provided position. If that's the case, it queries this value to the memory and returns it directly. If not, it fetches the BWT symbol corresponding to the current position and update this position using said symbol and said position for a LF-Mapping, and increments the number of step done so far. Then again, the new position is evaluated for a Suffix-Array index sample and so on and so forth until either the current position has such a sample, or the termination symbol \"\#\" is reached.
+In the first case, the returned position is the number of step added to the index sample, in the latter, the number of steps is returned. \\
+
+In both cases, the returned position corresponds to the short read position in the original (untransformed) text \textsl{T}.
+
+
 \begin{minipage}[t]{0.45\textwidth}
 \begin{figure}[H]
     \centering
@@ -76,24 +94,21 @@ If the two positions are still correct and the whole row has not been read, it g
     \label{fig:wl_fsm}
 \end{figure}
 \end{minipage}
+\hfill
+\begin{minipage}[t]{0.3\textwidth}
+
+\end{minipage}
 \vspace*{8mm}
 
 
-Upon termination of the \textsl{Bounds} algorithm, this block is notified that a new data is available. At the present time, only the \textsl{top} position is used. Hence, only one match - given there are at least one - is returned for each provided short read. As presented in Algorithm \ref{alg:WL}, this block first checks if there is a Suffix-Array index sample available for the provided position. If that's the case, it queries this value to the memory and returns it directly. If not, it fetches the BWT symbol corresponding to the current position and update this position using said symbol and said position for a LF-Mapping, and increments the number of step done so far. Then again, the new position is evaluated for a Suffix-Array index sample and so on and so forth until either the current position has such a sample, or the termination symbol \"\#\" is reached.
-In the first case, the returned position is the number of step added to the index sample, in the latter, the number of steps is returned. \\
-
-In both cases, the returned position corresponds to the short read position in the original (untransformed) text \textsl{T}.
-
 \subsection{Last-First}
 
-\begin{minipage}[t]{0.45\textwidth}
 \begin{figure}[H]
     \centering
     \includegraphics[scale = 0.5]{Figures/LF_FSM.png}
     \caption{Caption}
     \label{fig:lf_fsm}
 \end{figure}
-\end{minipage}
 \vspace*{8mm}
 
 
