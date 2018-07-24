@@ -98,18 +98,18 @@ SCHEMA BLOC, FSM, DIRE QUIL INCLU LA MEMQUERY
 Inherited from the project are the timing requirements for the system, set at 250MHz, meaning that in order to produce a bitmap for the FPGA that would be guaranteed to behave as written, there should be no paths longer than 4 ns for a signal between two storing elements or port. \\
 Considering the global structure of the implemented system, most paths respect this constraint as most exchanged data are stored into local registers and most operations are simple.\\
 
-Nonetheless, the HMC Interface bloc had a path that did not last under that 4 ns, this being due to a rather unpleasant but necessary operation done one the position provided by the FM-Index. In the case of a query for a symbol of the BWT, the actual address is calculated by dividing this position by the number of symbol contained in each row, meaning here the inconvenient number 42. This kind of division is synthesized into a series of numerous simpler operations (see Fig. \ref{fig:timing} with by default no storage element in between, thus creating a long path upon which we have little to no control. \\
+Nonetheless, the HMC Interface bloc had a path that did not last under that 4 ns, this being due to a rather unpleasant but necessary operation done one the position provided by the FM-Index. In the case of a query for a symbol of the BWT, the actual address is calculated by dividing this position by the number of symbol contained in each row, meaning here the inconvenient number 42. This kind of division is synthesized into a series of numerous simpler operations (see Fig. \ref{fig:timing}) with by default no storage element in between, thus creating a long path upon which we have little to no control. \\
 
 \begin{figure}[H]
     \centering
-    \includegraphics{}
-    \caption{Caption}
-    \label{fig:my_label}
+    \hspace*{-3mm}\includegraphics[scale = 0.4]{Figures/TIMING_RTL.png}
+    \caption{RTL View of the hardware path generated}
+    \label{fig:timing}
 \end{figure}
 
 After some digging [REFORMULER] it was enough to enable more control to the synthesizer on the timings and optimization of those kind of delays to reduce this time to just under 4 ns. 
 
-Another solution would have been to simplify the problematic operation by encoding the BWT on 4 bits. This would have allowed 32 elements per memory row, and thus reducing the division to a simple shift to the right.
+Another solution would have been to simplify the problematic operation by encoding the BWT on 4 bits. This would have allowed 32 elements per memory row, and thus reducing the division to a simple 5-bit shift to the right in order to determine an element's row and its position in it. However, this would have increase the space needed to store 
 
 \section{C++ Interface Implementation}
 
