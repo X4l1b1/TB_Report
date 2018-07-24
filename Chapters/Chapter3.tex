@@ -1,11 +1,11 @@
 % Chapter Template
 
-\chapter{Hardware Sequential Implementation of the FM-Index} % Main chapter title
+\chapter{Hardware Implementation of the FM-Index} % Main chapter title
 
 \label{Chapter3} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}			
-The main scope of this thesis is to implement the aforementioned algorithm on a specific \textsl{FPGA} board, with all the reference data stored in a memory accessible via bus interface. This chapter will aim to describe a first implementation of this algorithm that could be duplicated on one board and used in parallel.
+The main scope of this thesis is to implement the aforementioned algorithm on a specific \textsl{FPGA} board, with all the reference data stored in a memory accessible via bus interface. This chapter will aim to describe a first implementation of this algorithm that could be duplicated on one board allowing them to run in parallel.
 
-\section{Conception}
+\section{Design}
 
 %A first, sequential, model is presented in the Figures \ref{fig:seqschema} and \ref{fig:fsm}.\\
 \begin{figure}[H]
@@ -68,20 +68,7 @@ Considering this methods of implementing \textsl{LF} requires querying symbols f
 
 \section{VHDL Implementation}
 
-Mettre ici la figure d'avant, changer la figure d'avant pour enlever tous les trucs RTL : BRAM, REG, MUX et mettre juste des décideurs à la place.
-
-Mettre RTL ?
-
-\subsection{FMIndex}
-
-\subsection{Read PCI}
-
-\subsection{Last-First}
-
-\subsection{Bounds}
-
-\subsection{Walk-Left}
-
+[Mettre juste shéma bloc]
 
 
 \section{Test \& Validation}
@@ -273,13 +260,19 @@ Upon the availability of new data on the input stream, the DUT and its component
 
 Using the checkpoints, Suffix-Array and BWT references to generate memory stimuli, two case are implemented, one involving a input present in the text, the position of which is then verified. And another one involving an input not present in the text.
 
-\section{Results}
+\section{Test Results}
 
 As a result of those tests and simulation, several timing issues have been detected. Indeed, the use of register to store the data and signals as flags to notify other blocks of data availability led to several synchronization problems. 
 
 \begin{figure}[H]
     \centering
-    \hspace*{-30mm}\includegraphics[scale = 0.4]{Figures/LF_timing_issue.png}
-    \caption{Example of Signal and Data Synchronization Issue}
+    \hspace*{-10mm}\includegraphics[scale = 0.5]{Figures/lf_timing_issue.png}
+    \caption{REFAIRE SANS X Example of Signal and Data Synchronization Issue}
     \label{fig:lf_timing}
 \end{figure}
+
+In this example, we see that the \textrm{data\_ready} output flag from the LF\_MAPPING bloc is issued using a signal, raised when it updates the output signal \textrm{sbl\_os}, the actual output value is only available on the next clock rising edge from the corresponding register. Hence, WALK-LEFT fetch the symbol value before it is updated, thus leading to a crash of the system. \\
+
+Luckily, the solution to this kind of issue is rather simple : the output should be driven by the signal, which value is maintained using a register. Furthermore, considering it is a synchronous process that updates the flags, and thus the signals, the system remains fully synchronous.
+
+[Mettre un autre truc qui allait pas]
