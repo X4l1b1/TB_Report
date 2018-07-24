@@ -36,8 +36,12 @@ This section illustrates the internal functioning of the \textsl{FM-Index} bloc,
 
 \subsection{ReadWrite\_Stream}
 
-[SIMPLE SCHEMA BLOCK, FSM]
-
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.3]{Figures}
+    \caption{Caption}
+    \label{fig:my_label}
+\end{figure}
 This block is responsible for reading the received data by the streaming bus. Those data start by the \textsl{short read} ID and size, followed by the actual sequence, already encoded and inverted. The first information are stored in registers and the short read itself is placed into a buffer : once a line is ready, the global FSM is notified, and the reading continue.
 
 \subsection{Bounds}
