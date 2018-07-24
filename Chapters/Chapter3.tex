@@ -8,6 +8,14 @@ The main scope of this thesis is to implement the aforementioned algorithm on a 
 \section{Design}
 
 %A first, sequential, model is presented in the Figures \ref{fig:seqschema} and \ref{fig:fsm}.\\
+
+
+Figures \ref{fig:seqschema} illustrate the hierarchy of the different blocks and element composing the \textsl{FM-Index}. \\
+
+The details of the main FSM are described in Figure \ref{fig:fsm}, the different blocks are described in Section 3.1.2. Note that there are two different data input : one that is used to receive actual sequences to map onto the reference, the other is used to configure the \textsl{Occ} array, used in the LastFirst Mapping.
+
+\subsection{FM-Index}
+
 \begin{figure}[H]
     \centering
     \hspace*{-20mm}\includegraphics[scale = 0.45]{Figures/fmindex_top.png}
@@ -15,11 +23,15 @@ The main scope of this thesis is to implement the aforementioned algorithm on a 
     \label{fig:seqschema}
 \end{figure}
 
-Figures \ref{fig:seqschema} illustrate the hierarchy of the different blocks and element composing the \textsl{FM-Index}. \\
+This section illustrates the internal functioning of the \textsl{FM-Index} bloc, which is a hierarchical FSM, divided in 4 main steps as described below and illustrated in Figure \ref{fig:fm_fsm}.
+\begin{description}
+\item [Read Sequence -] This loop is used to consume data from the \textsl{PCI Express Interface} in order to load a short read to align in the reference text along with an ID value associated to it.
+\item [Bounds] - This loop scans the input sequence $q$ and, at each iteration, queries the \textsl{HMC} memory to update $top$ and $bot$. Note that is corresponds to Algorithm \ref{alg:match}.
+\item [Walk Left] - This loop corresponds to Algorithm \ref{alg:WL}. It is only reached when the precedent loop ends up with a valid range for $q$ in the suffix array, i.e. $q$ exists in the reference text. Then again, at each iteration, the HMC is queried to update the index.
+\item [Send Result] - This last part of the FSM sends back the results, whether $q$ was found or not, back to the result FIFO in the \textsl{PCI Express Interface}. This result contains the position (special value if not found), along with the ID corresponding to the query, stored in the \textsl{Read Sequence} step.
+\end{description}
 
-The details of the main FSM are described in Figure \ref{fig:fsm}, the different blocks are described in Section 3.1.2. Note that there are two different data input : one that is used to receive actual sequences to map onto the reference, the other is used to configure the \textsl{Occ} array, used in the LastFirst Mapping.
-
-\subsection{FM-Index Global FSM}
+\vspace*{8mm}
 
 \begin{minipage}[t]{0.45\textwidth}
 \begin{figure}[H]
@@ -30,27 +42,19 @@ The details of the main FSM are described in Figure \ref{fig:fsm}, the different
 \end{figure}
 \end{minipage}
 
-\vspace*{8mm}
-This section illustrates the internal functioning of the \textsl{FM-Index} bloc, which is a hierarchical FSM, divided in 4 main steps as described below and illustrated in Figure \ref{fig:fm_fsm}.
-\begin{description}
-\item [Read Sequence -] This loop is used to consume data from the \textsl{PCI Express Interface} in order to load a short read to align in the reference text along with an ID value associated to it.
-\item [Bounds] - This loop scans the input sequence $q$ and, at each iteration, queries the \textsl{HMC} memory to update $top$ and $bot$. Note that is corresponds to Algorithm \ref{alg:match}.
-\item [Walk Left] - This loop corresponds to Algorithm \ref{alg:WL}. It is only reached when the precedent loop ends up with a valid range for $q$ in the suffix array, i.e. $q$ exists in the reference text. Then again, at each iteration, the HMC is queried to update the index.
-\item [Send Result] - This last part of the FSM sends back the results, whether $q$ was found or not, back to the result FIFO in the \textsl{PCI Express Interface}. This result contains the position (special value if not found), along with the ID corresponding to the query, stored in the \textsl{Read Sequence} step.
-\end{description}
-
 
 \subsection{Read\_Stream}
 
 
 
-This block is responsible for reading the received data by the streaming bus. Those data start by the \textsl{short read} ID and size, followed by the actual sequence, already encoded and inverted. The first information are stored in registers and the short read itself is placed into a buffer : once a line is ready, the global FSM is notified, and the reading continue.
+This block is responsible for reading the received data by the streaming bus. Those data start by the \textsl{short read} ID and size, followed by the actual sequence, already encoded and inverted. The first information are stored in registers and the short read itself is placed into a buffer : once a line is ready, the global FSM is notified, and the reading continues. \\
+\vspace*{8mm}
 
 \begin{minipage}[t]{0.45\textwidth}
 \begin{figure}[H]
     \centering
-    \hspace*{-20mm}\includegraphics[scale = 0.5]{Figures/BOUNDS_FSM.png}
-    \caption{Bounds Bloc FSM}
+    \hspace*{-20mm}\includegraphics[scale = 0.4]{Figures/RDPCI_FSM.png}
+    \caption{ReadStream Bloc FSM}
     \label{fig:bounds_fsm}
 \end{figure}
 \end{minipage}
