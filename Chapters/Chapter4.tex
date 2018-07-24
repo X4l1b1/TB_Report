@@ -35,15 +35,15 @@ In the project architecture for each \textsl{AC-510} board, several pre-defined 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.45]{Figures/pico_board.png}
-    \caption{Block Schema of the hardware board}
+    \includegraphics[scale = 0.4]{Figures/pico_board.png}
+    \caption{Bloc Diagram of the Board}
     \label{fig:board_schema}
 \end{figure}
 
 \begin{minipage}[t]{0.6\textwidth}
 \begin{figure}[H]
   \hspace{-15mm}  \includegraphics[scale = 0.6]{Figures/block_diagram.png}
-    \caption{Block Diagram of the whole project}
+    \caption{Bloc Diagram of the whole project}
     \label{fig:block_diag}
 \end{figure}
 \end{minipage}
@@ -73,7 +73,7 @@ Below are defined the differents references places on the Figures \ref{fig:block
 \begin{description}
 \item [PCI Interface] - This bloc is the interface between the \textsl{PCI Express Bus} and the FM-Index bloc. It receives short reads and command from a master. In this interface, the FM-Index bloc is a slave, that wait for commands and data to start working. A FIFO is already implemented and this bloc consumes what is put into it. When a result is ready, it is placed in another FIFO that can be accessed by the computer master on the other end.
 \item [HMC Interface] - Similarly to the previous bloc, this one is the interface between the board main memory and the FM-Index bloc. Only accessed through the \textsl{Memory Query} bloc, it is used to query data, may it be checkpoints entries, BWT entries of Sampled Suffix array elements. All transactions are 128bits wide and the interpretation of the received data in the \textsl{Memory Query} bloc.
-\item [Memory Query] - This bloc is used by the FM-Index to issue all the different queries it might need along the string matching process, which means it implements all 3 "functions" needed by the FM-Index : $Occ$, $Count$ (thus $LF$) and $Walk-Left$ (with the sampled suffix array). Those queries can be about "checkpoints", BWT symbol or sampled suffix array entries and the type of said requests is specified by the \textrm{req\_type} signal. This bloc is then responsible for interpreting the received data and transmitting it in the appropriate form to the FM-Index bloc.
+\item [Memory Query] - This bloc is used by the FM-Index to issue all the different queries it might need along the string matching process, which means it implements all 3 "functions" needed by the FM-Index : $Occ$, $Count$ (thus $LF$) and $Walk-Left$ (with the sampled suffix array). Those queries can be about "checkpoints", BWT symbol or sampled suffix array entries and the type of said requests is specified by the \textrm{req\_type} signal. This bloc is then responsible for interpreting the received data and transmitting it in the appropriate form to the FM-Index bloc. Note that in the actual implementation, this bloc is part og the HMC Interface bloc.
 \end{description}
 
 \subsection{RED\_Top}

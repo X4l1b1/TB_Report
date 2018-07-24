@@ -46,17 +46,25 @@ This section illustrates the internal functioning of the \textsl{FM-Index} bloc,
 This block is responsible for reading the received data by the streaming bus. Those data start by the \textsl{short read} ID and size, followed by the actual sequence, already encoded and inverted. The first information are stored in registers and the short read itself is placed into a buffer : once a line is ready, the global FSM is notified, and the reading continue.
 
 \subsection{Bounds}
+
+ This block reads this sequence from the buffer on line at a time, once all elements from it have been used, it notifies the upper level it is ready for the next one and continues until it has read \textrm{size} elements. For each read symbol iteration, the top and bottom position outputs are updated one after the other. After each update, both the number of read symbol and the new positions are evaluated and just like in Algorithm \ref{alg:match}, if at some point the interval $ [ top,bottom ] $ is empty, the loop is terminated the FSM goes back to waiting for a new sequence.
+
 \begin{minipage}[t]{0.45\textwidth}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.5]{Figures/BOUNDS_FSM.png}
-    \caption{Caption}
+    \hspace*{-20mm}\includegraphics[scale = 0.5]{Figures/BOUNDS_FSM.png}
+    \caption{Bounds Bloc FSM}
     \label{fig:bounds_fsm}
 \end{figure}
 \end{minipage}
-\vspace*{8mm}
+\hfill
+\begin{minipage}[t]{0.4\textwidth}
+This sequential implementation of the Bounds algorithms is rather simple although not very time efficient. \\
 
- This block reads this sequence from the buffer on line at a time, once all elements from it have been used, it notifies the upper level it is ready for the next one and continues until it has read \textrm{size} elements. For each read symbol iteration, the top and bottom position outputs are updated one after the other. After each update, both the number of read symbol and the new positions are evaluated and just like in Algorithm \ref{alg:match}, if at some point the interval $ [ top,bottom ] $ is empty, the loop is terminated the FSM goes back to waiting for a new sequence.
+At the INIT state, the first row of the short read to map is stored in an internal register and all the counters are reset to their initial values. After request and reception of the new values for both \textit{top} and \textit{bot}, an evaluation is done on those values (verifying that \textit{bot} > \textit{top}) and the current iteration number. \\
+If the two positions are still correct and the whole row has not been read, it goes to the next symbol. If the current row is done but the short read is longer, the next row is requested.
+\end{minipage}
+\vspace*{8mm}
 
 \subsection{Walk-Left}
 
