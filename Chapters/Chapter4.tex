@@ -59,35 +59,33 @@ Below are defined the differents references places on the Figures \ref{fig:block
 \end{description}
 \end{minipage}
 
-\section{Integration into the Vivado Project}
+\section{Integration into the PicoBaseProject}
 
-\begin{figure}
-    \centering
-    \includegraphics[scale = 0.5]{Figures/schema_bloc.png}
-    \caption{FAIRE UN JOLI COMME LAUTRE}
-    \label{fig:my_label}
-\end{figure}
 
 \subsection{Additional Blocs}
 
+
+
 \begin{description}
 \item [PCI Interface] - This bloc is the interface between the \textsl{PCI Express Bus} and the FM-Index bloc. It receives short reads and command from a master. In this interface, the FM-Index bloc is a slave, that wait for commands and data to start working. A FIFO is already implemented and this bloc consumes what is put into it. When a result is ready, it is placed in another FIFO that can be accessed by the computer master on the other end.
-\item [HMC Interface] - Similarly to the previous bloc, this one is the interface between the board main memory and the FM-Index bloc. Only accessed through the \textsl{Memory Query} bloc, it is used to query data, may it be checkpoints entries, BWT entries of Sampled Suffix array elements. All transactions are 128bits wide and the interpretation of the received data in the \textsl{Memory Query} bloc.
+\item[Pico Bus Interface] - In order to enable addressed registers to configure the \textit{Occ} and \textit{LEN\_BWT} parameters, it seemed necessary to implement an interface to the PicoBus. The particularity of this bus is that it does not share the same clock that the rest of the system. It has indeed its own clock, expected to be much slower that the main one. This requires some level of synchronization in order to ensure the absence of metastable state of the written values. Thus, this bloc is in charge of listening to the address bus of the PicoBus interface in order to detect software originated writes. If one of those transaction is destined to one of the FM-Index internal parameters, it forwards the correct values to the central bloc.
+\item [HMC Interface] - Similarly to the first bloc, this one is the interface between the board main memory and the FM-Index bloc. Only accessed through the \textsl{Memory Query} bloc, it is used to query data, may it be checkpoints entries, BWT entries of Sampled Suffix array elements. All transactions are 128-bit wide and the interpretation of the received data in the \textsl{Memory Query} bloc.
 \item [Memory Query] - This bloc is used by the FM-Index to issue all the different queries it might need along the string matching process, which means it implements all 3 "functions" needed by the FM-Index : $Occ$, $Count$ (thus $LF$) and $Walk-Left$ (with the sampled suffix array). Those queries can be about "checkpoints", BWT symbol or sampled suffix array entries and the type of said requests is specified by the \textrm{req\_type} signal. This bloc is then responsible for interpreting the received data and transmitting it in the appropriate form to the FM-Index bloc. Note that in the actual implementation, this bloc is part og the HMC Interface bloc.
 \end{description}
 
-\subsection{RED\_Top}
-
+\subsection{Reds\_Top}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale = 0.4]{Figures/fmindex_top.png}
-    \caption{FAIRE POUR REDS TOP Bloc Diagram of reds\_top}
-    \label{fig:my_label}
+    \includegraphics[scale = 0.55]{Figures/REDS_TOP_DIAG.png}
+    \caption{reds\_top Bloc Diagram}
+    \label{fig:reds_top_diag}
 \end{figure}
 
 \subsection{PCI Interface}
 
 SCHEMA BLOC, FSM
+
+\subsection{PicoBus Interface}
 
 \subsection{HMC Interface}
 
