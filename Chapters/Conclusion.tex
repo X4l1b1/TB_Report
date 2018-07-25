@@ -30,7 +30,16 @@ For each of these flaws, a simple fix could be introduced that would greatly res
     \item With a simple modification of Walk-Left's FSM, it would be easy to consecutively \textit{walk back} for a limited number of positions contained in the provided interval and keep the results in a local buffer. Those could then be sent back consecutively through the stream with little modifications in the software.
 \end{enumerate}
 
-\subsection{Proposed Architecture}
+\subsection{Proposed Architectures}
+
+A first and most intuitive idea would be to duplicate the whole FM-Index bloc. Moreover, there are 5 independent HMC ports available to communicate with the HMC, thus, all could be used and assigned to a certain number of FM-Index blocs. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{}
+    \caption{Caption}
+    \label{fig:my_label}
+\end{figure}
 
 \subsection{Global Possible Improvements}
 
