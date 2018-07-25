@@ -91,8 +91,8 @@ SCHEMA BLOC, FSM
 
 \begin{figure}[H]
     \centering
-    \hspace*{-20mm}\includegraphics[scale = 0.45]{Figures/DIA.png}
-    \caption{Bloc Diagram of the FM-Index Top-Level}
+    \hspace*{-20mm}\includegraphics[scale = 0.45]{Figures/HMC_DIAG.png}
+    \caption{HMC Interface Bloc Diagram}
     \label{fig:seqschema}
 \end{figure}
 
@@ -115,6 +115,75 @@ After some digging [REFORMULER] it was enough to enable more control to the synt
 Another solution would have been to simplify the problematic operation by encoding the BWT on 4 bits. This would have allowed 32 elements per memory row, and thus reducing the division to a simple 5-bit shift to the right in order to determine an element's row and its position in it. However, this would have increase the space needed to store 
 
 \section{C++ Interface Implementation}
+
+In order to be able to communicate with the board from a computer, it requires a interface enabling :
+\begin{itemize}
+    \item [-] writing directly into the main memory in order to store the references
+    \item [-]writing parameters to addressed registers
+    \item [-] sending the short reads via a stream
+    \item [-] reading the results via a stream
+\end{itemize}
+
+Furthermore, it becomes necessary to generate references that would correspond to their usage in the hardware system, hence providing methods that would not only encode those references (BWT, sampled suffix-array and checkpoints) but also write those correctly into the HMC. Figure \ref{fig:memory} show the memory organization. Each row is 128-bit, little endian.
+ \\
+
+The first point will be further discussed in the section PicoFramework, as it highly relies on the framework provided by the board manufacturer. The latter is the subject of the next paragraph.
+
+
+\paragraph{BWT encoding}
+
+In order to correctly encode the BWT, the number of element per row has to be taken into account. Considering there is no 128-bit integer type available to store data row per row, each one of those is split into two 64-bit unsigned integers. Considering the symbols are encoded on 3 bits, there is no way to fill each word with a round number of symbols. Hence, in order to keep the data coherent, for each row, the procedure is describer in Algorithm \ref{alg:bwt}
+\vspace*{5mm}
+
+
+\begin{minipage}[t]{0.55\textwidth}
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\KwIn{BWT $T^{bwt}$ encoded as in section 2.3.1}
+	\KwOut{vector of uint64\_t pairs}
+	res = <>; \textit{\# Empty vector of uint64\_t pairs} \\
+	temp = <>; \textit{\# Empty pair of uint64\_t} \\
+	j = 0; \textit{\# Global Index}\\
+	\For{each 42 symbols roW in $T^{bwt}$}{
+		t = ""; \\
+		\For{i = 0; i < 42; i++}{
+		    t = to\_string(bwt[j]) + t;\\
+		    j++;
+		}
+		temp[0] = str\_to\_integer(t[64..127], 2);
+		temp[1] = str\_to\_integer(t[0..63], 2);
+        res.append(temp);
+	}
+\caption{Encoding the BWT for Memory
+}
+\label{alg:bwt}
+\end{algorithm}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.3 \textwidth}
+The string representation of each value is shown in the table below.
+\vspace*{5mm}
+
+
+\begin{tabular}{|c|c|}
+\hline
+Input    &  to\_string() result\\
+\hline
+ A    &  "010" \\
+ C    &  "011" \\
+ G    &  "100" \\
+ N    &  "101" \\
+ T    &  "110" \\
+\hline
+\end{tabular}
+\vspace*{3mm}
+
+The function \textit{str\_to\_integer} is given a string that it converts into an integer using the base provided as second argument to do the conversion. \\
+\end{minipage}
+
+A string representation of each row must be done in order to correctly dispatch the bits between the two 64-bit words. Every string is constructed from the right to the left in order to place the first character where the least significant bits are (as it is interpreted by the conversion method). \\
+Finally, the first element of each pair must represent the first 64 bits of the memory row, hence the indices [64..127] for the first 64-bit word, and [0..63] for the second.
+
 
 \subsection{Pico Framework}
 
