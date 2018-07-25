@@ -105,8 +105,8 @@ If the two positions are still correct and the whole row has not been read, it g
 
 \begin{figure}[H]
     \centering
-   \includegraphics[scale = 0.4]{Figures/BOUNDS_DIAG.png}
-    \caption{Bounds Bloc Diagram}
+   \includegraphics[scale = 0.4]{Figures/WL_DIAG.png}
+    \caption{Walk-Left Bloc Diagram}
     \label{fig:bounds_diag}
 \end{figure}
 
@@ -133,6 +133,12 @@ In both cases, the returned position corresponds to the short read position in t
 
 \subsection{Last-First}
 
+\begin{figure}[H]
+    \centering
+   \includegraphics[scale = 0.4]{Figures/LF_DIAG.png}
+    \caption{Last-Firt Mapping Bloc Diagram}
+    \label{fig:bounds_diag}
+\end{figure}
 
 
 This block, used by both the \textsl{Bounds} and \textsl{Walk\_Left} blocks is the central processing unit of the FM-Index. This bloc aims to implement the mapping between the \textsl{BWT} symbols and their respective index in the conceptual suffix array first column (Equation \ref{eq:LF}. For each symbol of \textsl{T's} alphabet, its \textsl{Occ} value can be provided via a dedicated interface and placed into local registers. In order to determine the \textsl{Count} value of the provided inputs, it first queries the closest checkpoint value corresponding to the given symbol. It then iteratively queries \textsl{BWT} symbol from this position until it reaches the given position, incrementing a local count value each time the obtained symbol corresponds to the input.
