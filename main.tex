@@ -1,0 +1,266 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Masters/Doctoral Thesis 
+% LaTeX Template
+% Version 2.4 (22/11/16)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Version 2.x major modifications by:
+% Vel (vel@latextemplates.com)
+%
+% This template is based on a template by:
+% Steve Gunn (http://users.ecs.soton.ac.uk/srg/softwaretools/document/templates/)
+% Sunil Patel (http://www.sunilpatel.co.uk/thesis-template/)
+%
+% Template license:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[
+11pt, % The default document font size, options: 10pt, 11pt, 12pt
+%oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
+english, % ngerman for German
+singlespacing, % Single line spacing, alternatives: onehalfspacing or doublespacing
+%draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
+%nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
+%liststotoc, % Uncomment to add the list of figures/tables/etc to the table of contents
+%toctotoc, % Uncomment to add the main table of contents to the table of contents
+%parskip, % Uncomment to add space between paragraphs
+%nohyperref, % Uncomment to not load the hyperref package
+headsepline, % Uncomment to get a line under the header
+%chapterinoneline, % Uncomment to place the chapter title next to the number on one line
+%consistentlayout, % Uncomment to change the layout of the declaration, abstract and acknowledgements pages to match the default layout
+]{MastersDoctoralThesis} % The class file specifying the document structure
+\usepackage{scrextend}
+\deffootnote[2em]{2em}{2em}{\textsuperscript{\thefootnotemark}\,}
+\usepackage[utf8]{inputenc} % Required for inputting international characters
+\usepackage[T1]{fontenc} % Output font encoding for international characters
+\usepackage{tocloft}
+\usepackage{pdfpages}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{minted}
+\usepackage{epigraph}
+\usepackage{pdfpages}
+\usepackage{caption}
+\usepackage{palatino} % Use the Palatino font by default
+\usepackage{etoolbox}
+\usepackage{lscape}
+\usepackage{multicol,multirow}
+ \usepackage{cancel}
+ \usepackage{colortbl}
+ \usepackage{float}
+     \usepackage{amsmath}
+          \usepackage[linesnumbered,ruled]{algorithm2e}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{language=C++,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{blue}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	commentstyle=\color{orange}\ttfamily,
+	morecomment=[l][\color{magenta}]{\#}
+}
+
+
+% Rotating table
+\usepackage{rotating}
+\AfterEndEnvironment{myenv}{\restoregeometry}
+\newenvironment{myenv}{%
+  \newgeometry{top = 0in}%
+}{%
+  \newpage%
+}
+\usepackage[font=small,labelfont=bf]{caption} % Required for specifying captions to tables and figures
+ \usepackage{pgfgantt}
+%\usepackage[backend=bibtex,style=authoryear,natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
+%\addbibresource{example.bib} % The filename of the bibliography
+\definecolor{bleu}{RGB}{37,104,162}
+%\usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
+\renewcommand{\baselinestretch}{1.2}
+%----------------------------------------------------------------------------------------
+%	MARGIN SETTINGS
+%----------------------------------------------------------------------------------------
+\geometry{
+	paper=a4paper, % Change to letterpaper for US letter
+	inner=2cm, % Inner margin
+	outer=3cm, % Outer margin
+	bindingoffset=.5cm, % Binding offset
+	top=1cm, % Top margin
+	bottom=1.3cm, % Bottom margin
+	%showframe, % Uncomment to show how the type block is set on the page
+}
+
+%----------------------------------------------------------------------------------------
+%	THESIS INFORMATION
+%----------------------------------------------------------------------------------------
+
+\thesistitle{\textcolor{bleu}{Genomic Data Processing} \linebreak \newline
+\normalsize{Hardware Implementation of an Indexed Sequence Mapper}} % Your thesis title, this is used in the title and abstract, print it elsewhere with \ttitle
+\supervisor{\textcolor{bleu}{Prof. Yann \textsc{Thoma}}} % Your supervisor's name, this is used in the title page, print it elsewhere with \supname
+\examiner{} % Your examiner's name, this is not currently used anywhere in the template, print it elsewhere with \examname
+\degree{Bachelor in Computer Science} % Your degree name, this is used in the title page and abstract, print it elsewhere with \degreename
+\author{\textcolor{bleu}{Arthur \textsc{Passuello}}} % Your name, this is used in the title page and abstract, print it elsewhere with \authorname
+\addresses{} % Your address, this is not currently used anywhere in the template, print it elsewhere with \addressname
+
+\subject{} % Your subject area, this is not currently used anywhere in the template, print it elsewhere with \subjectname
+\keywords{} % Keywords for your thesis, this is not currently used anywhere in the template, print it elsewhere with \keywordnames
+\university{\href{http://www.university.com}{HEIG-VD}} % Your university's name and URL, this is used in the title page and abstract, print it elsewhere with \univname
+\department{\href{http://department.university.com}{\textcolor{bleu}{Information and Communication Department} }} % Your department's name and URL, this is used in the title page and abstract, print it elsewhere with \deptname
+\group{\href{http://researchgroup.university.com}{\textcolor{bleu}{ }}} % Your research group's name and URL, this is used in the title page, print it elsewhere with \groupname
+\faculty{\href{http://unil.ch}{\textcolor{bleu}{Embedded Computing Orientation}}} % Your faculty's name and URL, this is used in the title page and abstract, print it elsewhere with \facname
+\setcounter{chapter}{-1}
+\AtBeginDocument{
+\hypersetup{pdftitle=\ttitle} % Set the PDF's title to your title
+\hypersetup{pdfauthor=\authorname} % Set the PDF's author to your name
+\hypersetup{pdfkeywords=\keywordnames} % Set the PDF's keywords to your keywords
+\hypersetup{allcolors=black}
+}
+\setcounter{tocdepth}{0}
+\setcounter{tocdepth}{5} %shows all levels incl. paragraph
+\begin{document}
+
+\frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
+
+\pagestyle{plain} % Default to the plain heading style until the thesis style is called for the body content
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{titlepage}
+
+\vspace*{-20mm}
+\includegraphics[scale = 0.5]{Figures/heigvd_logo.png}
+\begin{center}
+\textsc{\Large Bachelor Thesis}\\[0.5cm] % Thesis type
+
+\HRule \\[0.4cm] % Horizontal line
+{\huge \bfseries \ttitle\par}\vspace{0.4cm} % Thesis title
+\HRule \\[1.5cm] % Horizontal line
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Author:}\\
+\href{http://www.johnsmith.com}{\authorname} % Author name - remove the \href bracket to remove the link
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushright} \large
+\emph{Supervisor:} \\
+\href{http://www.jamessmith.com}{\textcolor{red}{\supname}} \linebreak
+\textit{\small{Haute École d'Ingénieurie et de Gestion du Canton de Vaud}} \linebreak  % Supervisor name - remove the \href bracket to remove the link
+
+\emph{Expert:} \\
+\href{http://www.jamessmith.com}{\textcolor{bleu}{Prof. Andres UPEGUI}} \linebreak 
+\textit{\small{University of Applied Sciences of Western Switzerland}}
+\end{flushright}
+\end{minipage}\\[1.5cm]
+
+\large \textit{Presented at the 2018 Autumn session under the supervision \linebreak of \\ \vspace*{3mm} Prof. Yann Thoma}\\[0.3cm] % University requirement text
+\textit{at the}\\[0.4cm]\textcolor{bleu}{
+Embedded Computing Orientation \\ \vspace*{3mm}
+\textcolor{black}{Information \& Communication Department} \\ \vspace*{3mm} HEIG-VD}\\[1cm] % Research group name and department name
+{\large \today}\\ % Date
+%\includegraphics{Logo} % University/department logo - uncomment to place it
+\vfill
+\end{center}
+\end{titlepage}
+
+%----------------------------------------------------------------------------------------
+%	QUOTATION PAGE
+%----------------------------------------------------------------------------------------
+\thispagestyle{empty}
+\newpage
+
+\vspace*{0.2\textheight}
+
+
+\begin{figure*}[h]
+	\centering
+
+	\includegraphics[scale = 0.6]{Figures/xkcd.png}
+		\captionsetup{labelformat=empty}% redefines the caption setup of the figures environment in the beamer class.
+	\caption{DNA}
+	\label{XKCD}
+\end{figure*}
+
+\noindent\enquote{ Relevant xkcd.\footnote{source : \textit{\href{https://xkcd.com/1605/}{https://xkcd.com/1605/}}}}\bigbreak
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
+\addchaptertocentry{\abstractname{}} % Add the abstract to the table of contents
+With the recent improvements made in the process of DNA sequencing, especially by increasing greatly the speed at which such data can be generated from a genome, the stress on processing those data increased as well. Once the genome has been read, it is necessary to map it onto a known reference in order to extract information from it. With current software tools, it requires several days to do so. With the progress made in hardware technologies, notably in FPGA, it seems pertinent to wonder whether this process could be hasten by implementing hardware accelerator for this stage of the genomic data processing pipeline. Hence, this thesis aims to explore the possibility of an hardware implementation of an exact sequence mapper, using the Burrows-Wheeler Transform and the FM-Index, a widely used tool in the domain of genomics.
+\end{abstract}
+
+\begin{extraAbstract}
+\addchaptertocentry{Résumé{}} % Add the abstract to the table of contents
+Avec les récents progrès fait dans le séquençage de l'ADN, notamment dans la grande accélération du process de lecture de  ce dernier, l'accent mis sur les performances du traitement de ces données s'est vu augmenter aussi. Une fois le génome lu, il est nécessaire de faire correspondre les séquences lues à un génome de référence afin de pouvoir interpréter ces données. Actuellement, c'est un processus qui peut durer jusqu'à plusieurs jours. En considérent les progrès fait en matière de technologies matérielles, notamment avec les FPGAs, il semble pertinent de se demander si cet étape du pipeline de traitement des données génomique ne pourrait pas être accéléré par un composant matériel. Ainsi, cette thèse cherche à explorer cette possibilité par une implémentation matérielle d'un algorithme de \textit{mapping} de séquence sur une référence, à travers l'utilisation de la transformée de Burrows-Wheeler et le FM-Index, deux outils très utilisés dans le domaine.
+\end{extraAbstract}
+\newpage
+
+%----------------------------------------------------------------------------------------
+%	LIST OF CONTENTS/FIGURES/TABLES PAGES
+%----------------------------------------------------------------------------------------
+\textcolor{bleu}{
+\tableofcontents} % Prints the main table of contents
+
+% \listoffigures % Prints the list of figures
+
+% \listoftables % Prints the list of tables
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - CHAPTERS
+%----------------------------------------------------------------------------------------
+\mainmatter % Begin numeric (1,2,3...) page numbering
+
+\pagestyle{thesis} % Return the page headers back to the "thesis" style
+\setcounter{page}{1}
+\setcounter{chapter}{0}
+\cftsetindents{subsubsection}{0.5in}{0.5in}
+% Include the chapters of the thesis as separate files from the Chapters folder
+% Uncomment the lines as you write the chapters
+
+
+
+\include{Chapters/Chapter1}
+\include{Chapters/Chapter2} 
+\include{Chapters/Chapter3}
+%\include{Chapters/ChapterTemp}
+\include{Chapters/Chapter4}
+\include{Chapters/Chapter5} 
+%\include{Chapters/Chapter6} 
+\include{Chapters/Conclusion}
+%\include{Chapters/Biblio} 
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - APPENDICES
+%----------------------------------------------------------------------------------------
+
+%\textcolor{white}{\appendix} % Cue to tell LaTeX that the following "chapters" are Appendices
+%\textcolor{white}{\chapter{Annexes}}
+% Include the appendices of the thesis as separate files from the Appendices folder
+% Uncomment the lines as you write the Appendices
+%\include{Appendices/Journal}
+%\include{Appendices/AppendixA}
+\include{Appendices/AppendixB}
+%\include{Appendices/gantt}
+%\include{Appendices/AppendixC}
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\bibliography{example.bib}
+\bibliographystyle{unsrt}
+%----------------------------------------------------------------------------------------
+
+\end{document}  

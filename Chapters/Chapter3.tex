@@ -150,7 +150,7 @@ Considering this methods of implementing \textsl{LF} requires querying symbols f
 \begin{figure}[H]
     \centering
 \hspace*{-20mm}\includegraphics[scale = 0.5]{Figures/LF_FSM.png}
-    \caption{Caption}
+    \caption{Last-First Mapping FSM}
     \label{fig:lf_fsm}
 \end{figure}
 \vspace*{8mm}
@@ -182,7 +182,7 @@ To simulate the memory, a reference dataset has been created using the previousl
 Each testbench is defined according to the same structure, as depicted in Figure \ref{fig:Tb_struct}. For each DUT, a record is defined for each input sender and output receiver. For each input record, a process is defined to generate stimuli and for each output record, an equality operator is defined, allowing the \textrm{Verification} process to check the correctness of those output signals. \\
 All DUT receive input from another internal block, referred as FM, which expects a final result. In order to get those results, most blocks need to interact with an external resource (such as a memory, a bus, etc.). Thus, those being independent in the computing process, it has been decided to completely separate those signals both in stimulation and verification. \\
 
-Finally, every testbench includes two processes to generate a clock signal and an initial reset signal. The first is stop upon the termination of the FM-stimuli. \\
+Finally, every testbench includes two processes to generate a clock signal and an initial reset signal. The first is stopped upon the termination of the FM-stimuli. \\
 
 The following paragraphs further detail those different input and output for each block and summarize the operations performed.
 

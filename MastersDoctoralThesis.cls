@@ -281,9 +281,11 @@
 	\automark[chapter]{chapter}
 	\ihead{\headmark}% Inner header
 	\ohead[\pagemark]{\pagemark}% Outer header
+	\ifoot{Arthur Passuello}
+	\ofoot{\includegraphics[scale=0.15]{Figures/heigvd_logo.png}}}
 }
-\ifoot{}% Inner footer
-\ofoot{}% Outer footer
+\ifoot{Arthur Passuello}% Inner footer
+\ofoot{Arthur Passuello}% Outer footer
 \pagestyle{thesisSimple}
 \providepairofpagestyles[thesisSimple]{thesis}{%
 	\automark*[section]{}%

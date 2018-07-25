@@ -124,11 +124,28 @@ In order to be able to communicate with the board from a computer, it requires a
     \item [-] reading the results via a stream
 \end{itemize}
 
-Furthermore, it becomes necessary to generate references that would correspond to their usage in the hardware system, hence providing methods that would not only encode those references (BWT, sampled suffix-array and checkpoints) but also write those correctly into the HMC. Figure \ref{fig:memory} show the memory organization. Each row is 128-bit, little endian.
- \\
+Furthermore, it becomes necessary to generate references that would correspond to their usage in the hardware system, hence providing methods that would not only encode those references (BWT, sampled suffix-array and checkpoints) but also write those correctly into the HMC. Figure \ref{fig:memory} show the memory organization. Each row is 128-bit, little endian. \\
 
-The first point will be further discussed in the section PicoFramework, as it highly relies on the framework provided by the board manufacturer. The latter is the subject of the next paragraph.
+\begin{minipage}[t]{0.4\textwidth}
+\begin{figure}[H]
+    \centering
+    \hspace*{-10mm}\includegraphics[scale = 0.4]{Figures/MEM_RPZ.png}
+    \caption{Memory Organization}
+    \label{fig:memory}
+\end{figure}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.5\textwidth}
 
+The biggest reference to store is the BWT with 3-bit values for each symbol, half of the memory is dedicated to it. \\
+Then, the Sampled Suffix-Array with 32-bit values every 32 symbols (average 1 bit per symbol). \\
+Finally the checkpoints, separated by symbol in order to simplify the address and the offset calculation, although it requires passing the requested symbol to the HMC Interface. For 5 symbols, it requires $5 * 32 / 128$ bits, so an average of 1.25 bit per symbol.\\
+Hence, a total of 5.25 bits per symbol is necessary to store all the references, with a 4GiB memory, when can then process references up to $\approx 8.2*10^{8}$ symbols.
+\end{minipage}
+
+\vspace*{8mm}
+
+The first point will be further discussed in the section PicoFramework, as it highly relies on the framework provided by the board manufacturer.
 
 \paragraph{BWT encoding}
 
@@ -159,7 +176,7 @@ In order to correctly encode the BWT, the number of element per row has to be ta
 \label{alg:bwt}
 \end{algorithm}
 \end{minipage}
-\hfill
+ \hfill
 \begin{minipage}[t]{0.3 \textwidth}
 The string representation of each value is shown in the table below.
 \vspace*{5mm}
@@ -180,15 +197,78 @@ Input    &  to\_string() result\\
 
 The function \textit{str\_to\_integer} is given a string that it converts into an integer using the base provided as second argument to do the conversion. \\
 \end{minipage}
+\vspace*{5mm}
 
-A string representation of each row must be done in order to correctly dispatch the bits between the two 64-bit words. Every string is constructed from the right to the left in order to place the first character where the least significant bits are (as it is interpreted by the conversion method). \\
-Finally, the first element of each pair must represent the first 64 bits of the memory row, hence the indices [64..127] for the first 64-bit word, and [0..63] for the second.
+
+\textit{\underline{Note}} : If the number of symbols is not a multiple of 42, a last loop is done with the remainings values, padding the rest of the buffer row with '0's. \\
+
+
+
+A string representation of each row must be done in order to correctly dispatch the bits between the two 64-bit words. Every string is constructed from the right to the left in order to place the first character where the least significant bits are (as it is interpreted by the conversion method - little endian). \\
+Finally, the first element of each pair must represent the first 64 bits of the memory row, hence the indices [64..127] for the first 64-bit word, and [0..63] for the second that will be used for bits [63..0] and [127..64] respectively to write the memory row.
+
+\paragraph{Sampled Suffix-Array and Checkpoints encoding}
+
+All values from those references are stored in and used as 32-bit values. This round number allows 4 values per row and the order in which the written buffer is defined as follow :
+\begin{enumerate}
+    \item Fetch the next 4 values in an array \texttt{position[4]} of unsigned 32-bit integers with \texttt{position[0]} being the first fetched, etc.
+    \item Convert each value into an hexadecimal representation
+    \item Add this row to the final buffer
+    \item Repeat from Step 1 until there is no value left
+\end{enumerate}
+
+\textit{\underline{Note}}: If the number of checkpoints or suffix-array sample is not a multiple of 4, this a last loop is done, padding the rest of the buffer row with '0's. \\
+
+Both those encoding methods are passed a binary input file containing unsigned integer value for each position / symbol.
+
+In the scope of this project, only a terminal interface will be implemented. It is used as follow :
+\begin{enumerate}
+    \item Launch the program providing either a bitmap or a project file corresponding to the system implemented for the FPGA
+    \item Upon request, provide a FASTA file containing the reference genome
+    \item Upon request, provide a FASTQ file containing the short reads to map onto the reference
+    \item Upon notification, a text file should contain all the short reads reference followed by their position in the reference ('-1' if not found)
+\end{enumerate}
+
+The first step is further explained in the next section, as it fully takes advantage of the tools from the Pico Framework.
 
 
 \subsection{Pico Framework}
 
+This framework, provided by the board manufacturer, not only offers methods and tools to communicate with the board, but also a powerful way to simulate it and its execution.
+
+\paragraph{Writing to the Memory}
+
+[METTRE METHODE ET EN PARLER]
+
+\paragraph{Writing to and Ready from the Stream}
+
+[METTRE METHODE ET EN PARLER]
+
+\paragraph{Programming the Board}
+
+[METTRE METHODE ET EN PARLER]
+
 \section{Co-Simulation}
+
+In order to facilitate the debug process, the Pico Framework offers a way to simulate the board instead of loading it to test the developped application. Doing so is rather simple : it is enough to provide the program a project file (e.g. \texttt{.fwproj} for Vivado, \texttt{.qpf} for Quartus).\\
+
+This allowed us to thoroughly test the implemented system with a simulation very close to the reality. Despite being hard to read, the simulation provides all the desired signals inside the system, thus allowing for a deep inspection of its behavior.
+
+\subsection{Constated Issues}
+
+As a result to those simulations, several issues have been noted that did not occur in the previously mentioned testbenches :
+\begin{itemize}
+    \item [-] The endianness of the memory must be dealt with in order for the data to be coherent. Unexpectedly, it was a major issue during the test phase and on several occasions was the reason the system was failing.
+    \item [-] The HMC memory bus' contain all '0' when not used. The requested data is only available for 1 clock period and thus, has to be latched immediately.
+    \item [-] The PicoBus, from which the parameters registers are written, not only is used by the framework and thus, the address decoder must be restricted to a certain address range. But it also has a clock very much slower than the internal system clock. Hence, it is necessary deal with this by re-synchronizing the received data.
+\end{itemize}
 
 \section{On-Board Testing}
 
 \section{Validation}
+
+In order to validate the system, the reference used in Chapter 3 has been used and some mock short reads extracted from it are used as input, this time, as is (meaning here as a text and not already processed data). \\
+
+The results were quite satisfying, as all the bugs had been detected during the simulation process. \\
+
+Despite being a little over the restriction (less than 0.1 ns) for a couple a paths, the system seems to behave correctly in normal conditions (low temperature and low demand).
