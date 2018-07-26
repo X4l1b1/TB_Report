@@ -177,18 +177,18 @@ Both those modifications, although coming from opposite situations, meet in the 
 			\centering
 			\begin{subfigure}{.5\textwidth}
 				\centering
-				\includegraphics[width=.5\linewidth]{Figures/sa.png}
-				\caption{TODO SA sample example}
+	\hspace*{-10mm}\includegraphics[width=.5\linewidth]{Figures/SSA.png}
+				\caption{Sampled SA Example}
 				\label{fig:ssa}
 				\end{subfigure}%
 				\begin{subfigure}{.5\textwidth}
 					\centering
-					\includegraphics[width=.8\linewidth]{Figures/CHECKPOINT.png}
-					\caption{TODO Checkpoint example}
-					\label{fig:sub2}
-					\end{subfigure}
-					\caption{Illustration of the two proposed improvement}
+					\includegraphics[width=\linewidth]{Figures/checkpoint.png}
+					\caption{Checkpoint example}
 					\label{fig:checkpoints}
+					\end{subfigure}
+					\caption{Illustration of the two proposed improvements}
+					\label{fig:opti}
 					\end{figure}
 
 
@@ -352,4 +352,7 @@ Using a Python reference \footnote{TODO cite https://github.com/egonelbre/fm-ind
 
 The results showed that the program was behaving as expected ad provided correct references and mappings. \\
 
-Sadly, the output format for the Mapped Reads, supposed to be in SAM, was not implemented.
+Sadly, the output format for the Mapped Reads, supposed to be in SAM, was not implemented. Instead, the program print the output in a file using the following format 
+\begin{minted}{c}
+Short read : <ID> - Position : <Position> ;
+\end{minted}

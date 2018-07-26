@@ -91,10 +91,20 @@ TODO
 
 \begin{figure}[H]
     \centering
-    \hspace*{-20mm}\includegraphics[scale = 0.45]{Figures/HMC_DIAG.png}
+    \hspace*{-20mm}\includegraphics[scale = 0.3 ]{Figures/HMC_DIAG.png}
     \caption{HMC Interface Bloc Diagram}
-    \label{fig:seqschema}
+    \label{fig:HMC_DIAG}
 \end{figure}
+
+The HMC interface, in its current state waits for a request from a FM-Index. Upon such a requests, it loads the parameters in order to prepare the address to be sent to the HMC Controller. After sending the command, it waits for the response. Once the response is there, it stores the value in a local register before parsing it, depending on the FM-Index request parameters. Figure \ref{fig:HMC_FSM} further illustrates the process.
+
+\begin{figure}[H]
+    \centering
+    \hspace*{-20mm}\includegraphics[scale = 0.45]{Figures/HMC_FSM.png}
+    \caption{HMC Interface FSM}
+    \label{fig:HMC_DIAG}
+\end{figure}
+
 
 \subsection{Timing Requirements}
 
