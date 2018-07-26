@@ -35,7 +35,7 @@ The transform can be divided in 4 main steps \footnote{BWT0} :
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.65]{Figures/bwt.png}
-\caption{Illustration of the \textsl{BWT} applied to the string \textit{acaacg}\footnote{REPRIS DE}}
+\caption{Illustration of the \textsl{BWT} applied to the string \textit{acaacg}}
  \label{fig:bwt}
  \end{figure}
 The figure \ref{fig:bwt} above illustrates the process of the \textsl{BWT}, it will be shown next what is used in the mapping process, but first let us note the following properties :
@@ -87,7 +87,7 @@ For a given $T^{bwt}$ of $N$ symbols on an alphabet $\Sigma$ of $\sigma$ element
 \begin{minipage}{0.5\textwidth}
 \begin{figure}[H]
     \hspace{-15mm}\includegraphics[scale = 0.35]{Figures/FMIndex.png}
-    \caption{Illustration of the FM-Index construction from "$acaacg$}
+    \caption{Illustration of the FM-Index construction from "$acaacg$"}
     \label{fig:fmindex}
 \end{figure}
 \end{minipage}
@@ -104,7 +104,7 @@ Those algorithms are described in \ref{alg:WL} and \ref{alg:match} and a graphic
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{Figures/WL.png}
-    \caption{Illustration of the BWT inversion using Walk-Left\footnote{REPRIS DE}}
+    \caption{Illustration of the BWT inversion using Walk-Left\cite{genomic}}
     \label{fig:walkleft}
 \end{figure}
 
@@ -155,7 +155,7 @@ Now that all the data structures and computational tools have been introduced, w
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.4]{Figures/MATCH.png}
-    \caption{Finding position of $aac$ in example $T$ \footnote{REPRIS DE}}
+    \caption{Finding position of $aac$ in example $T$ \cite{genomic}}
     \label{fig:match}
 \end{figure}
 
@@ -178,17 +178,17 @@ Both those modifications, although coming from opposite situations, meet in the 
 			\begin{subfigure}{.5\textwidth}
 				\centering
 				\includegraphics[width=.5\linewidth]{Figures/sa.png}
-				\caption{SA sample example}
-				\label{fig:sub1}
+				\caption{TODO SA sample example}
+				\label{fig:ssa}
 				\end{subfigure}%
 				\begin{subfigure}{.5\textwidth}
 					\centering
 					\includegraphics[width=.8\linewidth]{Figures/CHECKPOINT.png}
-					\caption{Checkpoint example}
+					\caption{TODO Checkpoint example}
 					\label{fig:sub2}
 					\end{subfigure}
 					\caption{Illustration of the two proposed improvement}
-					\label{fig:test}
+					\label{fig:checkpoints}
 					\end{figure}
 
 
@@ -346,9 +346,10 @@ Figure \ref{fig:cpp_workflow} describes the program structure and execution flow
 
 
 
-\section{Tests \& Validation}
+\section{Tests \& Results}
 
-[Benchmark \& Tests for C++]
+Using a Python reference \footnote{TODO cite https://github.com/egonelbre/fm-index}, it was possible to verify the output of the C++ software using a random DNA sequence. \\
 
+The results showed that the program was behaving as expected ad provided correct references and mappings. \\
 
-TODO TODO TODO
+Sadly, the output format for the Mapped Reads, supposed to be in SAM, was not implemented.
