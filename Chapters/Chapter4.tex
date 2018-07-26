@@ -107,7 +107,7 @@ This bloc keeps the received data into registers, await for the corresponding co
 \subsection{PicoBus Interface}
 \begin{figure}[H]
     \centering
-    \hspace*{-20mm}\includegraphics[scale = 0.5]{Figures/REG_DIAG.png}
+    \hspace*{-20mm}\includegraphics[scale = 0.4]{Figures/REG_DIAG.png}
     \caption{PicoBus Interface Block Diagram}
     \label{fig:REG_DIAG}
 \end{figure}
@@ -120,20 +120,24 @@ Then, the first layer of registers is also clocked with the bus' clock, to avoid
 
 \begin{figure}[H]
     \centering
-    \hspace*{-20mm}\includegraphics[scale = 0.3 ]{Figures/HMC_DIAG.png}
+    \hspace*{-10mm}\includegraphics[scale = 0.35]{Figures/HMC_DIAG.png}
     \caption{HMC Interface Bloc Diagram}
     \label{fig:HMC_DIAG}
 \end{figure}
 
-The HMC interface, in its current state waits for a request from a FM-Index. Upon such a requests, it loads the parameters in order to prepare the address to be sent to the HMC Controller. After sending the command, it waits for the response. Once the response is there, it stores the value in a local register before parsing it, depending on the FM-Index request parameters. Figure \ref{fig:HMC_FSM} further illustrates the process.
 
+\begin{minipage}[t]{0.5\textwidth}
 \begin{figure}[H]
     \centering
-    \hspace*{-20mm}\includegraphics[scale = 0.45]{Figures/HMC_FSM.png}
+    \hspace*{-10mm}\includegraphics[scale = 0.35]{Figures/HMC_FSM.png}
     \caption{HMC Interface FSM}
-    \label{fig:HMC_DIAG}
+    \label{fig:HMC_FSM}
 \end{figure}
-
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.4\textwidth}
+The HMC interface waits for a request from a FM-Index. Upon such a requests, it loads the parameters in order to prepare the address to be sent to the HMC Controller. After sending the command, it waits for the response. Once the response is there, it stores the value in a local register before parsing it, depending on the FM-Index request parameters. Figure \ref{fig:HMC_FSM} further illustrates the process.
+\end{minipage}
 
 \subsection{Timing Requirements}
 
@@ -324,7 +328,11 @@ As a result to those simulations, several issues have been noted that did not oc
 \end{itemize}
 
 \section{On-Board Testing}
-TODO
+
+In order to test the system directly on the board, the same program can be used. Instead of providing it a project file, it is necessary to provide it a bitmap for the FPGA. If the FPGA is reachable, the test software will then proceed to program it and behave like in the simulation. \\
+
+As expected, the result were the same than in the simulation.
+
 \section{Validation}
 
 In order to validate the system, the reference used in Chapter 3 has been used and some mock short reads extracted from it are used as input, this time, as is (meaning here as a text and not already processed data). \\
