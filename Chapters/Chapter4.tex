@@ -105,7 +105,17 @@ This bloc keeps the received data into registers, await for the corresponding co
 
 
 \subsection{PicoBus Interface}
-TODO
+\begin{figure}[H]
+    \centering
+    \hspace*{-20mm}\includegraphics[scale = 0.5]{Figures/REG_DIAG.png}
+    \caption{PicoBus Interface Block Diagram}
+    \label{fig:REG_DIAG}
+\end{figure}
+
+As mentioned earlier, a dedicated block is necessary to provide addressed register to the PicoBus. In Figure \ref{fig:REG_DIAG}, we can wee 3 layers of muxes and two layers of registers for each output signal. The first layer of muxes is used to enable updates only upon a write command from the bus. The second layer is used to update only the output corresponding to the provided address. The third layer is controled by the bus' clock, PicoClk in order for the update to by synchronized with the signal. This guarantees that, so far, all values are stable when forwarded. \\
+Then, the first layer of registers is also clocked with the bus' clock, to avoid any meta-stability from between the precedent mux and this register. Finally, the last register layer is clocked by the system clock, so that the output are synchronized with the rest of the system. \\
+
+
 \subsection{HMC Interface}
 
 \begin{figure}[H]
