@@ -350,12 +350,12 @@ As a result of those tests and simulation, several timing issues have been detec
 
 \begin{figure}[H]
     \centering
-    \hspace*{-10mm}\includegraphics[scale = 0.5]{Figures/lf_timing_issue.png}
+    \hspace*{-10mm}\includegraphics[scale = 0.45]{Figures/lf_timing_issue.png}
     \caption{Example of Signal and Data Synchronization Issue}
     \label{fig:lf_timing}
 \end{figure}
 
-In this example, we see that the \textrm{data\_ready} output flag from the LF\_MAPPING bloc is issued using a signal, raised when it updates the output signal \textrm{sbl\_os}, the actual output value is only available on the next clock rising edge from the corresponding register. Hence, WALK-LEFT fetch the symbol value before it is updated, thus leading to a crash of the system. \\
+In this example, we see that the \textrm{lf\_ready} output flag from the LF\_MAPPING bloc is issued using a signal, raised when it updates the output signal \textrm{sbl\_os}, the actual output value is only available on the next clock rising edge from the corresponding register (in the yellow circle). Hence, WALK-LEFT fetch the symbol value before it is updated, thus leading to a crash of the system. \\
 
 Luckily, the solution to this kind of issue is rather simple : the output should be driven by the signal, which value is maintained using a register. Furthermore, considering it is a synchronous process that updates the flags, and thus the signals, the system remains fully synchronous.
 
