@@ -67,8 +67,9 @@ Roughly, the idea would be the following :
     \item [Short Read Buffer] - This buffer contains fixed size chunks of provided short reads, the orange column corresponds to a bit indicating whether the line is done or not, i.e. whether ReadPCI should notify the software to send another chunk for a specific short read through the PicoBus.
     \item [Top, Bot Buffer - Bounds] Two buffers that are kept in sync with one another and with their corresponding short read by the \texttt{Top-Bot Control} and \texttt{Top-Bot Dispatch} blocks. The first would evaluate whether the Bounds processing is finished and whether both Top and Bot have been computed for the current symbol. If that's the case, it shifts the corresponding short read and proceed with the next step. The latter is used to dispatch Last-First response to the correct buffer and update the flag column with the current iteration index.
     \item [Last-First] This bloc would be the most demanded by the system, hence the breakdown of its internal loop seemed necessary, along with an arbiter for its input requests. The loop in which LF iteratively reads the BWT, until reaching a checkpoint entry, would be separated from the direct checkpoint request, hence the different buffers. This block can then receive data from Bounds for a position update, Walk-Left for a BWT symbol, the HMC for a response and from itself during the iterative loop.
-    
 \end{description}
+
+The remaining elements speaks for themselves and will not be discussed. Now despite the estimated efficiency of this architecture, its complexity and entanglement between the different phases of the algorithm would make it way harder to observe and debug, which is the main issue in hardware design.
 
 \subsection{Global Possible Improvements}
 
