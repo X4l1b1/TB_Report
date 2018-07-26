@@ -40,7 +40,7 @@ Finally, every instance, once done processing their current data, places their r
 \begin{figure}[H]
     \centering
     \includegraphics [scale = 0.4]{Figures/FMINDEX_DUPL_DIAG.png}
-    \caption{Gross Bloc Diagram of duplicate FM-Index Bloc}
+    \caption{Gross Bloc Diagram of duplicate FM-Index Bloc in Reds\_Top}
     \label{fig:FM_DUPL}
 \end{figure}
 
@@ -56,10 +56,15 @@ This architecture would seem to be the most efficient both space-wise ine the FP
 
 \begin{figure}[H]
     \centering
-    \includegraphics [scale = 0.4]{Figures/FMINDEX_DUPL_DIAG.png}
+    \includegraphics [scale = 0.5]{Figures/FM_OPTI.png}
     \caption{Gross Bloc Diagram of an Optimized FM-Index}
     \label{fig:FM_FIFO}
 \end{figure}
+
+Roughly, the idea would be the following :
+\begin{description}
+    \item [Short Read Buffer] - This buffer contains fixed size chunks of provided short reads, the orange column corresponds to a bit indicating whether the line is done or not, i.e. whether ReadPCI should read another line. Of course, the software would have 
+\end{description}
 
 \subsection{Global Possible Improvements}
 
