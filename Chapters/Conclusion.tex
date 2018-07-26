@@ -32,13 +32,33 @@ For each of these flaws, a simple fix could be introduced that would greatly res
 
 \subsection{Proposed Architectures}
 
-A first and most intuitive idea would be to duplicate the whole FM-Index bloc. Moreover, there are 5 independent HMC ports available to communicate with the HMC, thus, all could be used and assigned to a certain number of FM-Index blocs. 
+A first and most intuitive idea would be to duplicate the whole FM-Index bloc. Moreover, there are 5 independent HMC ports available to communicate with the HMC, thus, all could be used and assigned to a certain number of FM-Index blocs. Figure \ref{fig:FM_DUPL} shows how \textit{reds\_top} could be adapted to process multiple short reads in parallel. \\
+The parameters such as the Occ array and the BWT size are shared among all the instances of the FM-Index. The short reads are place in a FIFO, accessible from all instances, of course this FIFO would need to be of a fixed width and depth, that would limit said reads size to under a pre-defined constant. \\
+Every memory request from a FM-Index instance is placed into a FIFO, shared with several others instances. The index of each instance is used as a tag to place the memory response at the right buffer offset. \\
+Finally, every instance, once done processing their current data, places their result into a FIFO feeding the output stream. 
 
 \begin{figure}[H]
     \centering
-    \includegraphics{}
-    \caption{Caption}
-    \label{fig:my_label}
+    \includegraphics [scale = 0.4]{Figures/FMINDEX_DUPL_DIAG.png}
+    \caption{Gross Bloc Diagram of duplicate FM-Index Bloc}
+    \label{fig:FM_DUPL}
+\end{figure}
+
+This architecture, although it enables some degree of parallelization, still presents some major flaws. A first and most prohiminent one would be that each instance of the FM-Index is still only issuing one request at a time, thus still very slowed by the stall between all memory request. \\
+
+
+Another and more efficient idea would be to enable parallelism inside the FM-Index. In order to do so, the FSM must be broken down into a set of independent transactions. \\
+As long as there are central memory blocs to keep tracks of a short read ID and processing state (top and bot value, walk back value, current row, etc.). By using memory blocs to keep track of those values, and FIFO to feed the different blocks, the sequential FSM could be transformed into a finely pipelined process. Figure \ref{fig:FM_FIFO} depicts a gross representation of what could such an architecture look like. \\
+
+The main advantage of this architecture, despite being much more complex - and thus much harder to test and validate, is that this whole block could itself be duplicated in the \textit{reds\_top} layer. \\
+
+This architecture would seem to be the most efficient both space-wise ine the FPGA, and time-wise by minimizing the stalling time between HMC requests and responses. On the other hand, the overhead induced by the synchronization and coordination of those transactions would then not be negligible.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics [scale = 0.4]{Figures/FMINDEX_DUPL_DIAG.png}
+    \caption{Gross Bloc Diagram of duplicate FM-Index Bloc}
+    \label{fig:FM_FIFO}
 \end{figure}
 
 \subsection{Global Possible Improvements}
