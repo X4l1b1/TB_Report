@@ -47,7 +47,12 @@ When all the data is ready to use, Bounds is automatically triggered and proceed
 
 \subsection{Read\_Stream}
 
-TODO
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{Figures/RDPCI_DIAG.png}
+    \caption{Read PCI Block Diagram}
+    \label{fig:rdi_pci_diag}
+\end{figure}
 
 This block is responsible for reading the received data by the streaming bus. Those data start by the \textsl{short read} ID and size, followed by the actual sequence, already encoded and inverted. The first information are stored in registers and the short read itself is placed into a buffer : once a line is ready, the global FSM is notified, and the reading continues. \\
 \vspace*{8mm}
@@ -62,10 +67,7 @@ This block is responsible for reading the received data by the streaming bus. Th
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.4\textwidth}
-This sequential implementation of the Bounds algorithms is rather simple although not very time efficient. \\
-
-At the INIT state, the first row of the short read to map is stored in an internal register and all the counters are reset to their initial values. After request and reception of the new values for both \textit{top} and \textit{bot}, an evaluation is done on those values (verifying that \textit{bot} > \textit{top}) and the current iteration number. \\
-If the two positions are still correct and the whole row has not been read, it goes to the next symbol. If the current row is done but the short read is longer, the next row is requested.
+The first 128-bit word received from the stream is interpreted as the meta-information about the read i.e. its size and ID. Then, the following words are read and forwarded to the FM-Index buffer until \texttt{sr\_size} symbols have been read.
 \end{minipage}
 
 \subsection{Bounds}
@@ -123,7 +125,8 @@ In both cases, the returned position corresponds to the short read position in t
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.3\textwidth}
-TODO TODO TODO
+As mentioned above, the FSM loops until the current position corresponds to an available sample of the suffix-array or the current symbol is the EOS symbol. In both cases, the current count and the position from the suffix-array (if one was fetched) are summed up to provide the result and go back to the IDLE state.
+
 \end{minipage}
 \vspace*{8mm}
 
@@ -135,8 +138,6 @@ TODO TODO TODO
     \caption{Last-Firt Mapping Bloc Diagram}
     \label{fig:bounds_diag}
 \end{figure}
-
-TODO
 
 This block, used by both the \textsl{Bounds} and \textsl{Walk\_Left} blocks is the central processing unit of the FM-Index. This bloc aims to implement the mapping between the \textsl{BWT} symbols and their respective index in the conceptual suffix array first column (Equation \ref{eq:LF}. For each symbol of \textsl{T's} alphabet, its \textsl{Occ} value can be provided via a dedicated interface and placed into local registers. In order to determine the \textsl{Count} value of the provided inputs, it first queries the closest checkpoint value corresponding to the given symbol. It then iteratively queries \textsl{BWT} symbol from this position until it reaches the given position, incrementing a local count value each time the obtained symbol corresponds to the input.
 
