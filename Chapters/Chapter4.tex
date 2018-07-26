@@ -126,6 +126,8 @@ In order to be able to communicate with the board from a computer, it requires a
 
 Furthermore, it becomes necessary to generate references that would correspond to their usage in the hardware system, hence providing methods that would not only encode those references (BWT, sampled suffix-array and checkpoints) but also write those correctly into the HMC. Figure \ref{fig:memory} show the memory organization. Each row is 128-bit, little endian. \\
 
+The first point will be further discussed in the section PicoFramework, as it highly relies on the framework provided by the board manufacturer.
+
 \begin{minipage}[t]{0.4\textwidth}
 \begin{figure}[H]
     \centering
@@ -140,12 +142,10 @@ Furthermore, it becomes necessary to generate references that would correspond t
 The biggest reference to store is the BWT with 3-bit values for each symbol, half of the memory is dedicated to it. \\
 Then, the Sampled Suffix-Array with 32-bit values every 32 symbols (average 1 bit per symbol). \\
 Finally the checkpoints, separated by symbol in order to simplify the address and the offset calculation, although it requires passing the requested symbol to the HMC Interface. For 5 symbols, it requires $5 * 32 / 128$ bits, so an average of 1.25 bit per symbol.\\
-Hence, a total of 5.25 bits per symbol is necessary to store all the references, with a 4GiB memory, when can then process references up to $\approx 8.2*10^{8}$ symbols.
+Hence, a total of 5.25 bits per symbol is necessary to store all the references, with a 4GiB memory, we can then process references up to $\approx 8.2*10^{8}$ symbols.
 \end{minipage}
 
 \vspace*{8mm}
-
-The first point will be further discussed in the section PicoFramework, as it highly relies on the framework provided by the board manufacturer.
 
 \paragraph{BWT encoding}
 
