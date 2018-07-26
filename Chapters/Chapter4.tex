@@ -82,11 +82,11 @@ Below are defined the differents references places on the Figures \ref{fig:block
 \end{figure}
 
 \subsection{PCI Interface}
-
+TODO
 SCHEMA BLOC, FSM
 
 \subsection{PicoBus Interface}
-
+TODO
 \subsection{HMC Interface}
 
 \begin{figure}[H]
@@ -109,7 +109,7 @@ Nonetheless, the HMC Interface bloc had a path that did not last under that 4 ns
     \caption{RTL View of the hardware path generated}
     \label{fig:timing}
 \end{figure}
-
+TODO
 After some digging [REFORMULER] it was enough to enable more control to the synthesizer on the timings and optimization of those kind of delays to reduce this time to just under 4 ns. 
 
 Another solution would have been to simplify the problematic operation by encoding the BWT on 4 bits. This would have allowed 32 elements per memory row, and thus reducing the division to a simple 5-bit shift to the right in order to determine an element's row and its position in it. However, this would have increase the space needed to store 
@@ -149,7 +149,9 @@ Hence, a total of 5.25 bits per symbol is necessary to store all the references,
 
 \paragraph{BWT encoding}
 
-In order to correctly encode the BWT, the number of element per row has to be taken into account. Considering there is no 128-bit integer type available to store data row per row, each one of those is split into two 64-bit unsigned integers. Considering the symbols are encoded on 3 bits, there is no way to fill each word with a round number of symbols. Hence, in order to keep the data coherent, for each row, the procedure is describer in Algorithm \ref{alg:bwt}
+In order to correctly encode the BWT, the number of element per row has to be taken into account. Considering there is no 128-bit integer type available to store data row per row, each one of those is split into two 64-bit unsigned integers. Considering the symbols are encoded on 3 bits, there is no way to fill each word with a round number of symbols. Hence, in order to keep the data coherent, for each row, the procedure is describer in Algorithm \ref{alg:bwt}.\\
+
+
 \vspace*{5mm}
 
 
@@ -234,19 +236,38 @@ The first step is further explained in the next section, as it fully takes advan
 
 \subsection{Pico Framework}
 
-This framework, provided by the board manufacturer, not only offers methods and tools to communicate with the board, but also a powerful way to simulate it and its execution.
+This framework, provided by the board manufacturer, not only offers methods and tools to communicate with the board, but also a powerful way to simulate it and its execution. All the informations provided below are from the \textit{Pico User Guide}\cite{PICOO}.
 
-\paragraph{Writing to the Memory}
+\paragraph{Reaching the FPGA}
+\begin{minted}{c}
+PicoDrv *pico_ptr;
+int FindPico(uint32_t model, PicoDrv **drvpp);
+int RunBitFile(const char *bitFilePath, PicoDrv **drvpp);
+\end{minted}
 
-[METTRE METHODE ET EN PARLER]
+In order to be able to detect and link the FPGA, it is first necessary to declare a \texttt{PicoDrv} instance that will then provide all the methods in the next paragraphs. \\
+The pointer is instantiated using the \texttt{FinPico} method, providing it also an index corresponding to the FPGA model (\texttt{0x510} in this project).\\
+Then, the method \texttt{RunBitFile}, provided the aforementioned pointer and the path to a bitStream file, is used to program the FPGA with a compiled hardware system. \\
+Note that this last method can also be provided a project descriptor (Vivado or Quartus) in order to launch a simulation. This aspect will be further discussed in Section 4.4.
+
+
+\paragraph{Writing to the Memory} \\
+\begin{minted}{c}
+int WriteRam(uint64_t addr, const void * buf, int size, int memID);
+\end{minted}
+The address provided must be 16-Byte align, along with \texttt{buf} containing the data to write. Further more, \texttt{size} represents the number of bytes to write, it must also be a multiple of 16. Finally, \texttt{memID} indicates the ID of the memory to which we want to write, in this project, the required value is 0. \\
+
+The first word of the buffer will be placed at the first byte of the memory row, hence the buffer is big-endian word-wise. For each word however, the value is read as a little endian.
 
 \paragraph{Writing to and Ready from the Stream}
+\begin{minted}{c}
+int createStream(int streamID);
+int ReadStream(int streamHandle, void * buf, size_t count);
+int WriteStream(int streamHandle, const void * buf, size_t count);
+\end{minted}
+The first method is used to instanciate a handler for the stream that will then be needed for the two other methods. \\
 
-[METTRE METHODE ET EN PARLER]
-
-\paragraph{Programming the Board}
-
-[METTRE METHODE ET EN PARLER]
+The two following methods are used to respectively write to and read from the PCI stream between the computer and the FPGA. Considering the bus is a stream in this case, there are no addresses to provide but the \texttt{count} value is still required to be a multiple of the stream width in bytes, in this case, 16.
 
 \section{Co-Simulation}
 
@@ -264,7 +285,7 @@ As a result to those simulations, several issues have been noted that did not oc
 \end{itemize}
 
 \section{On-Board Testing}
-
+TODO
 \section{Validation}
 
 In order to validate the system, the reference used in Chapter 3 has been used and some mock short reads extracted from it are used as input, this time, as is (meaning here as a text and not already processed data). \\

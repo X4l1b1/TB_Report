@@ -7,16 +7,13 @@ The main scope of this thesis is to implement the aforementioned algorithm on a 
 
 \section{Design}
 
-%A first, sequential, model is presented in the Figures \ref{fig:seqschema} and \ref{fig:fsm}.\\
-
-
 Figures \ref{fig:seqschema} illustrate the hierarchy of the different blocks and element composing the \textsl{FM-Index}. \\
 
-The details of the main FSM are described in Figure \ref{fig:fm_fsm}, the different blocks are described in Section 3.1.2. Note that there are two different data input sources : one that is used to receive actual sequences to map onto the reference, the other is used to configure the \textsl{Occ} array, used in the LastFirst Mapping.
+The details of the main FSM are described in Figure \ref{fig:seqschema}, the different blocks are described in Section 3.1.2. Note that there are two different data input sources : one that is used to receive actual sequences to map onto the reference, the other is used to configure the \textsl{Occ} array, used in the LastFirst Mapping.
 
 \subsection{FM-Index}
 
-\begin{figure}[H]
+\begin{figure}[H]   
     \centering
     \hspace*{-20mm}\includegraphics[scale = 0.45]{Figures/fmindex_top.png}
     \caption{Bloc Diagram of the FM-Index Top-Level}
@@ -34,7 +31,7 @@ This section illustrates the internal functioning of the \textsl{FM-Index} bloc,
 \begin{minipage}[t]{0.45\textwidth}
 \begin{figure}[H]
     \centering
-    \hspace*{-25mm}\includegraphics[scale = 0.5]{Figures/FM_FSM.png}
+    \hspace*{-25mm}\includegraphics[scale = 0.37]{Figures/FM_FSM.png}
     \caption{FM-Index Main FSM}
     \label{fig:fm_fsm}
 \end{figure}
@@ -50,7 +47,7 @@ When all the data is ready to use, Bounds is automatically triggered and proceed
 
 \subsection{Read\_Stream}
 
-
+TODO
 
 This block is responsible for reading the received data by the streaming bus. Those data start by the \textsl{short read} ID and size, followed by the actual sequence, already encoded and inverted. The first information are stored in registers and the short read itself is placed into a buffer : once a line is ready, the global FSM is notified, and the reading continues. \\
 \vspace*{8mm}
@@ -119,20 +116,19 @@ In both cases, the returned position corresponds to the short read position in t
 \begin{minipage}[t]{0.45\textwidth}
 \begin{figure}[H]
     \centering
-    \hspace*{-20mm}\includegraphics[scale = 0.45]{Figures/WL_FSM.png}
+    \hspace*{-25mm}\includegraphics[scale = 0.45]{Figures/WL_FSM.png}
     \caption{Caption}
     \label{fig:wl_fsm}
 \end{figure}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.3\textwidth}
-
+TODO TODO TODO
 \end{minipage}
 \vspace*{8mm}
 
 
 \subsection{Last-First}
-
 \begin{figure}[H]
     \centering
    \includegraphics[scale = 0.4]{Figures/LF_DIAG.png}
@@ -140,6 +136,7 @@ In both cases, the returned position corresponds to the short read position in t
     \label{fig:bounds_diag}
 \end{figure}
 
+TODO
 
 This block, used by both the \textsl{Bounds} and \textsl{Walk\_Left} blocks is the central processing unit of the FM-Index. This bloc aims to implement the mapping between the \textsl{BWT} symbols and their respective index in the conceptual suffix array first column (Equation \ref{eq:LF}. For each symbol of \textsl{T's} alphabet, its \textsl{Occ} value can be provided via a dedicated interface and placed into local registers. In order to determine the \textsl{Count} value of the provided inputs, it first queries the closest checkpoint value corresponding to the given symbol. It then iteratively queries \textsl{BWT} symbol from this position until it reaches the given position, incrementing a local count value each time the obtained symbol corresponds to the input.
 
@@ -353,7 +350,7 @@ As a result of those tests and simulation, several timing issues have been detec
 \begin{figure}[H]
     \centering
     \hspace*{-10mm}\includegraphics[scale = 0.5]{Figures/lf_timing_issue.png}
-    \caption{REFAIRE SANS X Example of Signal and Data Synchronization Issue}
+    \caption{TODO SANS X Example of Signal and Data Synchronization Issue}
     \label{fig:lf_timing}
 \end{figure}
 
