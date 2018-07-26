@@ -83,6 +83,27 @@ Below are defined the differents references places on the Figures \ref{fig:block
 
 \subsection{PCI Interface}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.4]{Figures/PCI_INTFCE_DIAG.png}
+    \caption{PCI Interface Bloc Diagram}
+    \label{fig:pci_diag}
+\end{figure}
+
+\begin{minipage}[t]{0.45\textwidth}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.4]{Figures/PCI_INTFCE_FSM.png}
+    \caption{PCI Interface Bloc Diagram}
+    \label{fig:pci_fsm}
+\end{figure}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.3\textwidth}
+This bloc keeps the received data into registers, await for the corresponding consumer to be ready. Two independent FSM are present, one for writing to the stream and of for reading from it. Both states machines are further detailed in Figure \ref{fig:pci_fsm}.
+\end{minipage}
+
+
 \subsection{PicoBus Interface}
 TODO
 \subsection{HMC Interface}
